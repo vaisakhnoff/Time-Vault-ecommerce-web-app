@@ -1,872 +1,500 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Category Page</title>
+<%- include("../../views/partials/user/header") %>
 
-    <style>
-        .p_icon form,
-        .p_icon a {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 40px;
-            height: 40px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            color: #222;
-            transition: transform 0.3s, background 0.3s;
-            text-decoration: none;
-            border: none;
-            overflow: hidden;
-        }
-
-        .p_icon form:hover button,
-        .p_icon a:hover {
-            background: #ff0000;
-            color: #fff;
-            transform: scale(1.1);
-        }
-
-        .p_icon form button {
-            position: relative;
-            z-index: 3;
-            background: none;
-            border: none;
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            cursor: pointer;
-            color: inherit;
-            font-size: 18px;
-        }
-
-        .p_icon form button .ti-shopping-cart {
-            transition: color 0.3s ease;
-        }
-
-        .single-product {
-            margin-bottom: 30px;
-            transition: all 0.3s;
-        }
-
-        .product-img {
-            position: relative;
-            overflow: hidden;
-            background: #f8f8f8;
-            border: 1px solid #eee;
-        }
-
-        .product-img img {
-            width: 100%;
-            height: 255px;
-            object-fit: cover;
-            background-color: #f8f8f8;
-        }
-
-        .p_icon {
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .single-product:hover .p_icon {
-            bottom: 30px;
-            opacity: 1;
-        }
-
-        .product-btm {
-            padding: 15px;
-            text-align: center;
-        }
-
-        .product-btm h4 {
-            margin-bottom: 10px;
-            font-size: 16px;
-            color: #222;
-        }
-
-        .product-btm .mt-3 span {
-            font-size: 18px;
-            font-weight: 600;
-            color: #222;
-        }
-
-        .product-btm .mt-3 del {
-            font-size: 14px;
-            color: #777;
-            margin-left: 10px;
-        }
-
-        .single-product {
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .single-product:hover {
-            transform: translateY(-5px);
-        }
-
-        .p_icon {
-            z-index: 2;
-        }
-
-        .p_icon a {
-            position: relative;
-            z-index: 3;
-        }
-
-        .sidebar-categories {
-            background: #fff;
-            padding: 20px;
-            border-radius: 4px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-categories .head {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .filter-title {
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .filter-section {
-            padding: 15px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .sorting-options,
-        .category-options,
-        .brand-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .custom-control {
-            padding-left: 30px;
-        }
-
-        .custom-control-label {
-            cursor: pointer;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .custom-control-input:checked ~ .custom-control-label {
-            color: #222;
-            font-weight: 500;
-        }
-
-        .price-range-inputs input {
-            width: 80px;
-            padding: 5px;
-        }
-
-        .search-box input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .filter-actions {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .btn-primary {
-            background: #fbd600;
-            border-color: #fbd600;
-            color: #fff;
-        }
-
-        .btn-secondary {
-            background: #f8f9fa;
-            border-color: #ddd;
-            color: #666;
-        }
-
-        .search-area {
-            background: #f8f9fa;
-            border-bottom: 1px solid #eee;
-        }
-
-        .search-form .form-control {
-            height: 50px;
-            border-radius: 25px 0 0 25px;
-            padding: 0 25px;
-            font-size: 16px;
-            border: 2px solid #ddd;
-            border-right: none;
-        }
-
-        .search-form .btn {
-            padding: 0 30px;
-            height: 50px;
-            border-radius: 0 25px 25px 0;
-            background: transparent;
-            border: 2px solid #ddd;
-            border-left: none;
-            color: #222;
-            font-weight: 600;
-        }
-
-        .search-form .btn:hover {
-            background: #f8f9fa;
-        }
-
-        .search-form .btn-danger {
-            border-radius: 0;
-            padding: 0 15px;
-            background: transparent;
-            border: 2px solid #ddd;
-            border-left: none;
-            border-right: none;
-            color: #666;
-        }
-
-        .search-form .btn-danger:hover {
-            background: #f8f9fa;
-            color: #dc3545;
-        }
-
-        .search-form .input-group {
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .search-form .btn-danger {
-            border-radius: 0;
-            padding: 0 15px;
-            background: #dc3545;
-            border-color: #dc3545;
-        }
-
-        .search-form .btn-danger:hover {
-            background: #c82333;
-            border-color: #bd2130;
-        }
-
-        .search-form .input-group-append {
-            display: flex;
-        }
-
-        .fixed-pagination {
-            left: 50%;
-            transform: translateX(-50%);
-            /* ...other styles... */
-        }
-
-        .pagination-container {
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .pagination a {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            line-height: 40px;
-            text-align: center;
-            border: 1px solid #ddd;
-            border-radius: 50%;
-            color: #333;
-            background: #fff;
-            transition: background 0.3s ease, color 0.3s ease;
-            text-decoration: none;
-        }
-
-        .pagination a.active {
-            background: #fbd600;
-            border-color: #fbd600;
-            color: #fff;
-        }
-
-        .pagination a:hover {
-            background: #fbd600;
-            border-color: #fbd600;
-            color: #fff;
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-
-<body id="category">
-    <!-- Start Banner Area -->
-    <section class="banner-area organic-breadcrumb">
-        <div class="container">
-            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
-                <div class="col-first">
-                    <h1>Shop  page</h1>
-                    <nav class="d-flex align-items-center">
-                        <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
-                        
-                        <a href="#">Shop</a>
-                    </nav>
-                </div>
-            </div>
+<!-- ==========================================================================
+     SHOP CATALOG HERO & QUICK SEARCH (CLEAN WHITE & GOLD)
+     ========================================================================== -->
+<section class="vault-shop-hero">
+    <div class="container">
+        <div class="text-center mb-4">
+            <span class="vault-section-tag">Vault Archive &bull; Curated Timepieces</span>
+            <h1 class="vault-section-title">The <span class="vault-gold-text">Master Collection</span></h1>
+            <p class="vault-section-desc">Search, filter, and discover certified luxury chronometers, mechanical calibres, and smart instruments.</p>
         </div>
-    </section>
 
-    <div class="search-area py-5">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-6">
-                    <form id="topSearchForm" class="search-form" action="/shopPage" method="GET">
-                        <div class="input-group">
-                            <input type="text" 
-                                   class="form-control" 
-                                   name="search" 
-                                   id="searchInput"
-                                   placeholder="Search for products..."
-                                   value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
-                            <div class="input-group-append">
-                                <button class="btn" type="button" id="clearSearch" style="display: none;">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                                <button class="btn" type="submit">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-9">
+                <form id="topSearchForm" class="vault-search-glass" action="/shopPage" method="GET">
+                    <i class="ti-search mr-3" style="font-size: 18px; color: #ea580c;"></i>
+                    <input type="text" 
+                           id="searchInput" 
+                           name="search" 
+                           placeholder="Search Rolex, Carrera, Chronometer, Titanium, Smart..." 
+                           value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+                    <button type="button" class="btn btn-link text-muted p-0 mr-2" id="clearSearch" style="display: none;">
+                        <i class="ti-close"></i>
+                    </button>
+                    <button type="submit" class="search-submit-btn" title="Execute Search">
+                        <i class="ti-arrow-right"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
+</section>
 
-    <%- include("../../views/partials/user/header") %>
+<!-- ==========================================================================
+     CATALOG MAIN CONTAINER
+     ========================================================================== -->
+<div class="container py-5">
+    <div class="row">
+        <!-- Glass Filter Sidebar -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            <aside class="vault-sidebar">
+                <div class="vault-filter-header">
+                    <span><i class="ti-filter mr-2" style="color: #ea580c;"></i>Refine Vault</span>
+                    <button type="button" class="btn btn-link text-muted p-0" onclick="clearFilters()" style="font-size: 12px; text-decoration: none;">
+                        <i class="ti-reload mr-1"></i>Reset
+                    </button>
+                </div>
 
-    <!-- End Banner Area -->
-    <div class="container">
-        <div class="row">
-            <div class="col-xl-3 col-lg-4 col-md-5">
-                <div class="sidebar-categories">
-                    <div class="head">Sort & Filter</div>
-                    <form id="filterForm" class="filter-form">
-                        <!-- Sort Options -->
-                        <div class="sorting-section mb-4">
-                            <h6 class="filter-title">Sort By</h6>
-                            <div class="sorting-options">
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="newest" name="sort" value="newest" 
-                                           class="custom-control-input" 
-                                           <%= sort === 'newest' ? 'checked' : '' %>>
-                                    <label class="custom-control-label" for="newest">Newest First</label>
-                                </div>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="price_asc" name="sort" value="price_asc" 
-                                           class="custom-control-input"
-                                           <%= sort === 'price_asc' ? 'checked' : '' %>>
-                                    <label class="custom-control-label" for="price_asc">Price: Low to High</label>
-                                </div>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="price_desc" name="sort" value="price_desc" 
-                                           class="custom-control-input"
-                                           <%= sort === 'price_desc' ? 'checked' : '' %>>
-                                    <label class="custom-control-label" for="price_desc">Price: High to Low</label>
-                                </div>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="name_asc" name="sort" value="name_asc" 
-                                           class="custom-control-input"
-                                           <%= sort === 'name_asc' ? 'checked' : '' %>>
-                                    <label class="custom-control-label" for="name_asc">Name: A to Z</label>
-                                </div>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="name_desc" name="sort" value="name_desc" 
-                                           class="custom-control-input"
-                                           <%= sort === 'name_desc' ? 'checked' : '' %>>
-                                    <label class="custom-control-label" for="name_desc">Name: Z to A</label>
-                                </div>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="brand_asc" name="sort" value="brand_asc" 
-                                           class="custom-control-input"
-                                           <%= sort === 'brand_asc' ? 'checked' : '' %>>
-                                    <label class="custom-control-label" for="brand_asc">Brand: A to Z</label>
-                                </div>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="brand_desc" name="sort" value="brand_desc" 
-                                           class="custom-control-input"
-                                           <%= sort === 'brand_desc' ? 'checked' : '' %>>
-                                    <label class="custom-control-label" for="brand_desc">Brand: Z to A</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Category Filter -->
-                        <div class="filter-section mb-4">
-                            <h6 class="filter-title">Categories</h6>
-                            <div class="category-options">
-                                <% categories.forEach(function(category) { %>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" 
-                                               class="custom-control-input" 
-                                               id="category-<%= category._id %>" 
-                                               name="category" 
-                                               value="<%= category._id %>"
-                                               <%= selectedCategory === category._id.toString() ? 'checked' : '' %>>
-                                        <label class="custom-control-label" 
-                                               for="category-<%= category._id %>">
-                                            <%= category.name %>
+                <form id="filterForm">
+                    <!-- Category Domains -->
+                    <div class="vault-filter-group">
+                        <div class="vault-filter-label">Horological Domain</div>
+                        <ul class="vault-filter-list">
+                            <li class="vault-filter-item <%= !selectedCategory ? 'active' : '' %>">
+                                <label>
+                                    <input type="radio" name="category" value="" <%= !selectedCategory ? 'checked' : '' %> style="display: none;">
+                                    <span>All Domains</span>
+                                    <i class="ti-angle-right" style="font-size: 11px;"></i>
+                                </label>
+                            </li>
+                            <% if (categories && categories.length > 0) { %>
+                                <% categories.forEach(function(cat) { %>
+                                    <li class="vault-filter-item <%= (selectedCategory == cat._id.toString() || selectedCategory == cat.name) ? 'active' : '' %>">
+                                        <label>
+                                            <input type="radio" name="category" value="<%= cat._id %>" <%= (selectedCategory == cat._id.toString() || selectedCategory == cat.name) ? 'checked' : '' %> style="display: none;">
+                                            <span><%= cat.name %></span>
+                                            <i class="ti-angle-right" style="font-size: 11px;"></i>
                                         </label>
-                                    </div>
+                                    </li>
                                 <% }); %>
-                            </div>
-                        </div>
+                            <% } %>
+                        </ul>
+                    </div>
 
-                        <!-- Brand Filter -->
-                        <div class="filter-section mb-4">
-                            <h6 class="filter-title">Brands</h6>
-                            <div class="brand-options">
+                    <!-- Ateliers & Brands -->
+                    <div class="vault-filter-group">
+                        <div class="vault-filter-label">Atelier / Brand</div>
+                        <div class="vault-brand-chips">
+                            <label class="vault-brand-chip <%= !selectedBrand ? 'active' : '' %>">
+                                <input type="radio" name="brand" value="" <%= !selectedBrand ? 'checked' : '' %> style="display: none;">
+                                All Brands
+                            </label>
+                            <% if (brands && brands.length > 0) { %>
                                 <% brands.forEach(function(brand) { %>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" 
-                                               class="custom-control-input" 
-                                               id="brand-<%= brand._id %>" 
-                                               name="brand" 
-                                               value="<%= brand._id %>"
-                                               <%= selectedBrand === brand._id.toString() ? 'checked' : '' %>>
-                                        <label class="custom-control-label" 
-                                               for="brand-<%= brand._id %>">
-                                            <%= brand.brandName %>
-                                        </label>
-                                    </div>
+                                    <label class="vault-brand-chip <%= (selectedBrand == brand._id.toString() || selectedBrand == brand.brandName) ? 'active' : '' %>">
+                                        <input type="radio" name="brand" value="<%= brand._id %>" <%= (selectedBrand == brand._id.toString() || selectedBrand == brand.brandName) ? 'checked' : '' %> style="display: none;">
+                                        <%= brand.brandName %>
+                                    </label>
                                 <% }); %>
-                            </div>
+                            <% } %>
                         </div>
+                    </div>
 
-                        <!-- Price Range Filter -->
-                        <div class="filter-section mb-4">
-                            <h6 class="filter-title">Price Range</h6>
-                            <div class="price-range-inputs d-flex align-items-center">
-                                <input type="number" 
-                                       class="form-control form-control-sm" 
-                                       name="minPrice" 
-                                       placeholder="Min" 
-                                       value="<%= minPrice %>"
-                                       min="0">
-                                <span class="mx-2">-</span>
-                                <input type="number" 
-                                       class="form-control form-control-sm" 
-                                       name="maxPrice" 
-                                       placeholder="Max" 
-                                       value="<%= maxPrice %>"
-                                       min="0">
-                            </div>
+                    <!-- Price Range -->
+                    <div class="vault-filter-group">
+                        <div class="vault-filter-label">Valuation Range (₹)</div>
+                        <div class="d-flex align-items-center mb-3" style="gap: 8px;">
+                            <input type="number" 
+                                   name="minPrice" 
+                                   id="minPrice" 
+                                   class="form-control" 
+                                   placeholder="Min ₹" 
+                                   value="<%= minPrice %>" 
+                                   style="background: #f8fafc; border: 1px solid #e2e8f0; color: #0f172a; border-radius: 8px; font-size: 13px;">
+                            <span class="text-muted">-</span>
+                            <input type="number" 
+                                   name="maxPrice" 
+                                   id="maxPrice" 
+                                   class="form-control" 
+                                   placeholder="Max ₹" 
+                                   value="<%= maxPrice %>" 
+                                   style="background: #f8fafc; border: 1px solid #e2e8f0; color: #0f172a; border-radius: 8px; font-size: 13px;">
                         </div>
+                        <button type="submit" class="vault-btn-primary w-100 justify-content-center" style="padding: 10px 16px; font-size: 13px;">
+                            Apply Filters
+                        </button>
+                    </div>
+                </form>
+            </aside>
+        </div>
 
-                        <!-- Filter Actions -->
-                        <div class="filter-actions">
-                            <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
-                            <button type="button" class="btn btn-secondary btn-block mt-2" onclick="clearFilters()">Clear All</button>
-                        </div>
-                    </form>
+        <!-- Product Grid Column -->
+        <div class="col-lg-9 col-md-8">
+            <!-- Top Bar: Result Count & Sort Selector -->
+            <div class="vault-catalog-topbar">
+                <div style="font-size: 14px; color: var(--vault-text-secondary);">
+                    Showing <span class="font-weight-bold" id="productCount" style="color: #0f172a;"><%= products ? products.length : 0 %></span> Pieces in Selection
+                </div>
+
+                <div class="d-flex align-items-center" style="gap: 10px;">
+                    <span style="font-size: 13px; color: var(--vault-text-muted);">Sort By:</span>
+                    <select id="sortSelect" class="vault-sort-select" onchange="handleSortChange(this.value)">
+                        <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Latest Releases</option>
+                        <option value="price_asc" <%= sort === 'price_asc' ? 'selected' : '' %>>Price: Low to High</option>
+                        <option value="price_desc" <%= sort === 'price_desc' ? 'selected' : '' %>>Price: High to Low</option>
+                        <option value="name_asc" <%= sort === 'name_asc' ? 'selected' : '' %>>Piece Name: A to Z</option>
+                        <option value="name_desc" <%= sort === 'name_desc' ? 'selected' : '' %>>Piece Name: Z to A</option>
+                    </select>
                 </div>
             </div>
-            <div class="col-xl-9 col-lg-8 col-md-7">
-                <!-- Start Best Seller -->
-                <section class="lattest-product-area pb-40 category-list">
-                    <div class="row" id="productList">
-                        <% if (products && products.length > 0) { %>
-                            <% products.forEach(function(product) { %>
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="single-product">
-                                        <a href="/productDetails?id=<%= product._id %>" class="product-link">
-                                            <div class="product-img">
-                                                <img class="img-fluid w-100" 
-                                                     src="<%= product.productImage[0] %>" 
-                                                     alt="<%= product.productName %>"
-                                                     onerror="this.src='/img/no-image.jpg'"
-                                                     style="height: 255px; object-fit: cover;">
-                                                <div class="p_icon">
-                                                    <a href="#" onclick="event.preventDefault(); addToCart('<%= product._id %>')"> 
-                                                        <i class="ti-shopping-cart"></i>
-                                                    </a>
-                                                    <a href="#" onclick="event.preventDefault(); addToWishlist('<%= product._id %>');">
-                                                        <i class="ti-heart"></i>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="product-btm">
-                                                <h4><%= product.productName %></h4>
-                                                <p class="brand-name"><%= product.brand ? product.brand.brandName : 'No Brand' %></p>
-                                                <div class="mt-3">
-                                                    <% if (product.salePrice && product.salePrice < product.regularPrice) { %>
-                                                        <span class="mr-4">₹<%= product.salePrice %></span>
-                                                        <del>₹<%= product.regularPrice %></del>
-                                                    <% } else { %>
-                                                        <span>₹<%= product.regularPrice %></span>
-                                                    <% } %>
-                                                </div>
-                                            </div>
+
+            <!-- Product Grid -->
+            <div class="row" id="productList">
+                <% if (products && products.length > 0) { %>
+                    <% products.forEach(function(product) { %>
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="vault-product-card h-100">
+                                <div class="vault-product-media">
+                                    <img src="<%= (product.productImage && product.productImage[0]) ? product.productImage[0] : '/uploads/product-images/placeholder.jpg' %>" 
+                                         alt="<%= product.productName %>"
+                                         onerror="this.src='/uploads/product-images/placeholder.jpg'">
+
+                                    <div class="vault-card-badges">
+                                        <% const brandTitle = (product.brand && (product.brand.brandName || (typeof product.brand === 'string' && !/^[0-9a-fA-F]{24}$/.test(product.brand) ? product.brand : null))); %>
+                                        <% if (brandTitle) { %>
+                                            <span class="vault-badge-brand"><%= brandTitle %></span>
+                                        <% } %>
+                                        <% if (product.salePrice && product.salePrice < product.regularPrice) { %>
+                                            <% const discount = Math.round(((product.regularPrice - product.salePrice) / product.regularPrice) * 100); %>
+                                            <span class="vault-badge-discount">-<%= discount %>%</span>
+                                        <% } %>
+                                    </div>
+
+                                    <div class="vault-product-actions">
+                                        <a href="/productDetails?id=<%= product._id %>" class="vault-icon-action" title="Inspect Timepiece">
+                                            <i class="ti-eye"></i>
+                                        </a>
+                                        <a href="#" onclick="event.preventDefault(); addToCart('<%= product._id %>');" class="vault-icon-action" title="Add to Bag">
+                                            <i class="ti-bag"></i>
+                                        </a>
+                                        <a href="#" onclick="event.preventDefault(); addToWishlist('<%= product._id %>');" class="vault-icon-action" title="Save to Wishlist">
+                                            <i class="ti-heart"></i>
                                         </a>
                                     </div>
                                 </div>
-                            <% }); %>
-                        <% } else { %>
-                            <div class="col-12 text-center">
-                                <p>No products available.</p>
+
+                                <div class="vault-product-info">
+                                    <div class="vault-product-cat-label">
+                                        <%= (product.category && product.category.name) ? product.category.name : 'Horology' %>
+                                    </div>
+                                    <a href="/productDetails?id=<%= product._id %>" class="vault-product-name" title="<%= product.productName %>">
+                                        <%= product.productName %>
+                                    </a>
+
+                                    <div class="vault-pricing-row">
+                                        <% if (product.salePrice && product.salePrice < product.regularPrice) { %>
+                                            <span class="vault-price-current">₹<%= Number(product.salePrice).toLocaleString('en-IN') %></span>
+                                            <span class="vault-price-original">₹<%= Number(product.regularPrice).toLocaleString('en-IN') %></span>
+                                        <% } else { %>
+                                            <span class="vault-price-current">₹<%= Number(product.regularPrice).toLocaleString('en-IN') %></span>
+                                        <% } %>
+                                    </div>
+
+                                    <div class="vault-stock-indicator <%= (product.quantity > 5) ? 'in-stock' : 'low-stock' %>">
+                                        <span class="dot"></span>
+                                        <span><%= (product.quantity > 5) ? 'Available in Vault' : 'Only ' + product.quantity + ' left' %></span>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="col-12 text-center py-5">
+                        <div class="glass-panel p-5 d-inline-block" style="max-width: 480px;">
+                            <i class="ti-search mr-2" style="font-size: 3rem; color: #ea580c;"></i>
+                            <h4 class="mt-3">No Timepieces Found</h4>
+                            <p class="text-muted">No vault items matched your filter criteria. Try broadening your parameters.</p>
+                            <button class="vault-btn-primary mt-2" onclick="clearFilters()">Reset All Filters</button>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Glass Pagination -->
+            <div id="paginationContainer">
+                <% if (totalPages > 1) { %>
+                    <div class="vault-pagination">
+                        <% if (currentPage > 1) { %>
+                            <a href="#" class="vault-page-pill" onclick="changePage(<%= currentPage - 1 %>); return false;">
+                                <i class="ti-arrow-left"></i>
+                            </a>
+                        <% } %>
+
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <a href="#" class="vault-page-pill <%= currentPage == i ? 'active' : '' %>" onclick="changePage(<%= i %>); return false;">
+                                <%= i %>
+                            </a>
+                        <% } %>
+
+                        <% if (currentPage < totalPages) { %>
+                            <a href="#" class="vault-page-pill" onclick="changePage(<%= currentPage + 1 %>); return false;">
+                                <i class="ti-arrow-right"></i>
+                            </a>
                         <% } %>
                     </div>
-
-                    <!-- Pagination -->
-                    <div class="pagination-container" id="paginationContainer" style="text-align: center; margin: 20px 0;">
-                        <% if (totalPages > 1) { %>
-                            <div class="pagination">
-                                <% if (currentPage > 1) { %>
-                                    <a href="?page=<%= currentPage - 1 %>" class="prev-arrow" data-page="<%= currentPage - 1 %>">
-                                        <i class="fa fa-long-arrow-left"></i>
-                                    </a>
-                                <% } %>
-
-                                <% for(let i = 1; i <= totalPages; i++) { %>
-                                    <a href="?page=<%= i %>" 
-                                       class="<%= currentPage == i ? 'active' : '' %>" 
-                                       data-page="<%= i %>">
-                                        <%= i %>
-                                    </a>
-                                <% } %>
-
-                                <% if (currentPage < totalPages) { %>
-                                    <a href="?page=<%= currentPage + 1 %>" class="next-arrow" data-page="<%= currentPage + 1 %>">
-                                        <i class="fa fa-long-arrow-right"></i>
-                                    </a>
-                                <% } %>
-                            </div>
-                        <% } %>
-                    </div>
-                </section>
-                <!-- End Best Seller -->
-            
+                <% } %>
             </div>
         </div>
     </div>
+</div>
 
-    <%- include("../../views/partials/user/footer") %>
+<%- include("../../views/partials/user/footer") %>
 
-    <script>
-        // Function to update the product list and pagination dynamically
-        async function updateProductList(params) {
-            try {
-                const response = await fetch(`/shopPage?${params.toString()}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest' // Indicate AJAX request
-                    }
-                });
-                const data = await response.json();
+<!-- ==========================================================================
+     CLIENT FILTER & AJAX CONTROLLERS
+     ========================================================================== -->
+<script>
+async function updateProductList(params) {
+    try {
+        const response = await fetch(`/shopPage?${params.toString()}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        const data = await response.json();
 
-                // Update product list
-                const productList = document.getElementById('productList');
-                productList.innerHTML = '';
-                if (data.products && data.products.length > 0) {
-                    data.products.forEach(product => {
-                        const productHtml = `
-                            <div class="col-lg-4 col-md-6">
-                                <div class="single-product">
-                                    <a href="/productDetails?id=${product._id}" class="product-link">
-                                        <div class="product-img">
-                                            <img class="img-fluid w-100" 
-                                                 src="${product.productImage[0]}" 
-                                                 alt="${product.productName}"
-                                                 onerror="this.src='/img/no-image.jpg'"
-                                                 style="height: 255px; object-fit: cover;">
-                                            <div class="p_icon">
-                                                <a href="#" onclick="event.preventDefault(); addToCart('${product._id}')">
-                                                    <i class="ti-shopping-cart"></i>
-                                                </a>
-                                                <a href="#" onclick="event.preventDefault(); addToWishlist('${product._id}');">
-                                                    <i class="ti-heart"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="product-btm">
-                                            <h4>${product.productName}</h4>
-                                            <p class="brand-name">${product.brand ? product.brand.brandName : 'No Brand'}</p>
-                                            <div class="mt-3">
-                                                ${product.salePrice && product.salePrice < product.regularPrice ? 
-                                                    `<span class="mr-4">₹${product.salePrice}</span><del>₹${product.regularPrice}</del>` : 
-                                                    `<span>₹${product.regularPrice}</span>`}
-                                            </div>
-                                        </div>
+        const productList = document.getElementById('productList');
+        const productCount = document.getElementById('productCount');
+        productList.innerHTML = '';
+
+        if (productCount) {
+            productCount.textContent = data.products ? data.products.length : 0;
+        }
+
+        if (data.products && data.products.length > 0) {
+            data.products.forEach(product => {
+                const brandName = (product.brand && product.brand.brandName) ? product.brand.brandName : (typeof product.brand === 'string' && !/^[0-9a-fA-F]{24}$/.test(product.brand) ? product.brand : '');
+                const catName = (product.category && product.category.name) ? product.category.name : 'Horology';
+                const imgSrc = (product.productImage && product.productImage[0]) ? product.productImage[0] : '/uploads/product-images/placeholder.jpg';
+                
+                let pricingHtml = '';
+                let discountBadge = '';
+                if (product.salePrice && product.salePrice < product.regularPrice) {
+                    const discount = Math.round(((product.regularPrice - product.salePrice) / product.regularPrice) * 100);
+                    discountBadge = `<span class="vault-badge-discount">-${discount}%</span>`;
+                    pricingHtml = `
+                        <span class="vault-price-current">₹${Number(product.salePrice).toLocaleString('en-IN')}</span>
+                        <span class="vault-price-original">₹${Number(product.regularPrice).toLocaleString('en-IN')}</span>
+                    `;
+                } else {
+                    pricingHtml = `<span class="vault-price-current">₹${Number(product.regularPrice).toLocaleString('en-IN')}</span>`;
+                }
+
+                const stockClass = (product.quantity > 5) ? 'in-stock' : 'low-stock';
+                const stockText = (product.quantity > 5) ? 'Available in Vault' : `Only ${product.quantity} left`;
+
+                const productHtml = `
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="vault-product-card h-100">
+                            <div class="vault-product-media">
+                                <img src="${imgSrc}" alt="${product.productName}" onerror="this.src='/uploads/product-images/placeholder.jpg'">
+                                <div class="vault-card-badges">
+                                    ${brandName ? `<span class="vault-badge-brand">${brandName}</span>` : ''}
+                                    ${discountBadge}
+                                </div>
+                                <div class="vault-product-actions">
+                                    <a href="/productDetails?id=${product._id}" class="vault-icon-action" title="Inspect Timepiece">
+                                        <i class="ti-eye"></i>
+                                    </a>
+                                    <a href="#" onclick="event.preventDefault(); addToCart('${product._id}');" class="vault-icon-action" title="Add to Bag">
+                                        <i class="ti-bag"></i>
+                                    </a>
+                                    <a href="#" onclick="event.preventDefault(); addToWishlist('${product._id}');" class="vault-icon-action" title="Save to Wishlist">
+                                        <i class="ti-heart"></i>
                                     </a>
                                 </div>
-                            </div>`;
-                        productList.insertAdjacentHTML('beforeend', productHtml);
-                    });
-                } else {
-                    productList.innerHTML = '<div class="col-12 text-center"><p>No products available.</p></div>';
-                }
-
-                // Update pagination
-                const paginationContainer = document.getElementById('paginationContainer');
-                paginationContainer.innerHTML = '';
-                if (data.totalPages > 1) {
-                    let paginationHtml = '<div class="pagination">';
-                    if (data.currentPage > 1) {
-                        paginationHtml += `<a href="#" class="prev-arrow" data-page="${data.currentPage - 1}"><i class="fa fa-long-arrow-left"></i></a>`;
-                    }
-                    for (let i = 1; i <= data.totalPages; i++) {
-                        paginationHtml += `<a href="#" class="${data.currentPage == i ? 'active' : ''}" data-page="${i}">${i}</a>`;
-                    }
-                    if (data.currentPage < data.totalPages) {
-                        paginationHtml += `<a href="#" class="next-arrow" data-page="${data.currentPage + 1}"><i class="fa fa-long-arrow-right"></i></a>`;
-                    }
-                    paginationHtml += '</div>';
-                    paginationContainer.innerHTML = paginationHtml;
-
-                    // Add event listeners to new pagination links
-                    document.querySelectorAll('.pagination a').forEach(link => {
-                        link.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            const page = link.getAttribute('data-page');
-                            const params = new URLSearchParams(window.location.search);
-                            params.set('page', page);
-                            updateProductList(params);
-                            updateUrl(params);
-                        });
-                    });
-                }
-
-                // Update URL without reloading
-                updateUrl(params);
-            } catch (error) {
-                console.error('Error updating product list:', error);
-                window.location.href = '/pageNotFound';
-            }
-        }
-
-        // Function to update the URL without reloading
-        function updateUrl(params) {
-            const newUrl = `${window.location.pathname}?${params.toString()}`;
-            window.history.pushState({}, '', newUrl);
-        }
-
-        // Handle search form submission
-        document.getElementById('topSearchForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const searchQuery = document.getElementById('searchInput').value;
-            const params = new URLSearchParams(window.location.search);
-            if (searchQuery) {
-                params.set('search', searchQuery);
-            } else {
-                params.delete('search');
-            }
-            params.set('page', '1');
-            updateProductList(params);
-        });
-
-        // Handle filter form submission
-        document.getElementById('filterForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const params = new URLSearchParams();
-            for (let [key, value] of formData.entries()) {
-                if (value) {
-                    params.append(key, value);
-                }
-            }
-            params.set('page', '1');
-            updateProductList(params);
-        });
-
-        // Handle sort radio buttons
-        document.querySelectorAll('input[name="sort"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const params = new URLSearchParams(window.location.search);
-                params.set('sort', this.value);
-                params.set('page', '1');
-                updateProductList(params);
+                            </div>
+                            <div class="vault-product-info">
+                                <div class="vault-product-cat-label">${catName}</div>
+                                <a href="/productDetails?id=${product._id}" class="vault-product-name" title="${product.productName}">
+                                    ${product.productName}
+                                </a>
+                                <div class="vault-pricing-row">
+                                    ${pricingHtml}
+                                </div>
+                                <div class="vault-stock-indicator ${stockClass}">
+                                    <span class="dot"></span>
+                                    <span>${stockText}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                productList.insertAdjacentHTML('beforeend', productHtml);
             });
-        });
-
-        // Handle clear filters
-        function clearFilters() {
-            const form = document.getElementById('filterForm');
-            form.reset();
-            const params = new URLSearchParams();
-            params.delete('page'); // Remove page parameter
-            updateProductList(params);
-            updateUrl(params);
+        } else {
+            productList.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <div class="glass-panel p-5 d-inline-block" style="max-width: 480px;">
+                        <i class="ti-search mr-2" style="font-size: 3rem; color: #ea580c;"></i>
+                        <h4 class="mt-3">No Timepieces Found</h4>
+                        <p class="text-muted">No vault items matched your filter criteria. Try broadening your parameters.</p>
+                        <button class="vault-btn-primary mt-2" onclick="clearFilters()">Reset All Filters</button>
+                    </div>
+                </div>
+            `;
         }
 
-        // Handle clear search
-        document.getElementById('clearSearch').addEventListener('click', function() {
-            const searchInput = document.getElementById('searchInput');
-            searchInput.value = '';
-            toggleClearButton();
-            
-            // Clear all search params and reload products
-            const params = new URLSearchParams();
-            updateProductList(params);
-            updateUrl(params); // This will remove all parameters from URL
-        });
-
-        // Toggle clear button visibility with fade effect
-        const searchInput = document.getElementById('searchInput');
-        const clearButton = document.getElementById('clearSearch');
-
-        function toggleClearButton() {
-            if (searchInput.value) {
-                clearButton.style.display = 'block';
-                clearButton.style.opacity = '1';
-            } else {
-                clearButton.style.opacity = '0';
-                setTimeout(() => {
-                    clearButton.style.display = 'none';
-                }, 200);
+        const paginationContainer = document.getElementById('paginationContainer');
+        paginationContainer.innerHTML = '';
+        if (data.totalPages > 1) {
+            let pagHtml = '<div class="vault-pagination">';
+            if (data.currentPage > 1) {
+                pagHtml += `<a href="#" class="vault-page-pill" onclick="changePage(${data.currentPage - 1}); return false;"><i class="ti-arrow-left"></i></a>`;
             }
+            for (let i = 1; i <= data.totalPages; i++) {
+                pagHtml += `<a href="#" class="vault-page-pill ${data.currentPage == i ? 'active' : ''}" onclick="changePage(${i}); return false;">${i}</a>`;
+            }
+            if (data.currentPage < data.totalPages) {
+                pagHtml += `<a href="#" class="vault-page-pill" onclick="changePage(${data.currentPage + 1}); return false;"><i class="ti-arrow-right"></i></a>`;
+            }
+            pagHtml += '</div>';
+            paginationContainer.innerHTML = pagHtml;
         }
 
-        // Add transition style for fade effect
-        clearButton.style.transition = 'opacity 0.2s ease';
+        updateUrl(params);
+    } catch (error) {
+        console.error('Error updating vault catalog:', error);
+    }
+}
 
-        // Initialize clear button state
-        toggleClearButton();
+function updateUrl(params) {
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.pushState({}, '', newUrl);
+}
 
-        // Listen for input changes
-        searchInput.addEventListener('input', toggleClearButton);
+function changePage(page) {
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', page);
+    updateProductList(params);
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+}
 
-        // Handle search form submission
-        document.getElementById('topSearchForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const searchQuery = searchInput.value;
-            const params = new URLSearchParams();
-            
-            if (searchQuery) {
-                params.set('search', searchQuery);
-            }
-            
-            params.set('page', '1');
-            updateProductList(params);
+function handleSortChange(sortVal) {
+    const params = new URLSearchParams(window.location.search);
+    params.set('sort', sortVal);
+    params.set('page', '1');
+    updateProductList(params);
+}
+
+document.getElementById('topSearchForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const searchQuery = document.getElementById('searchInput').value.trim();
+    const params = new URLSearchParams(window.location.search);
+    if (searchQuery) {
+        params.set('search', searchQuery);
+    } else {
+        params.delete('search');
+    }
+    params.set('page', '1');
+    updateProductList(params);
+});
+
+document.querySelectorAll('#filterForm input[name="category"], #filterForm input[name="brand"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const formData = new FormData(document.getElementById('filterForm'));
+        const params = new URLSearchParams(window.location.search);
+        
+        const cat = formData.get('category');
+        if (cat) params.set('category', cat); else params.delete('category');
+        
+        const brand = formData.get('brand');
+        if (brand) params.set('brand', brand); else params.delete('brand');
+
+        params.set('page', '1');
+        updateProductList(params);
+
+        document.querySelectorAll('.vault-filter-item').forEach(el => el.classList.remove('active'));
+        if (radio.name === 'category') {
+            radio.closest('.vault-filter-item').classList.add('active');
+        }
+        if (radio.name === 'brand') {
+            document.querySelectorAll('.vault-brand-chip').forEach(el => el.classList.remove('active'));
+            radio.closest('.vault-brand-chip').classList.add('active');
+        }
+    });
+});
+
+document.getElementById('filterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const minVal = document.getElementById('minPrice').value;
+    const maxVal = document.getElementById('maxPrice').value;
+    const params = new URLSearchParams(window.location.search);
+
+    if (minVal) params.set('minPrice', minVal); else params.delete('minPrice');
+    if (maxVal) params.set('maxPrice', maxVal); else params.delete('maxPrice');
+    params.set('page', '1');
+    updateProductList(params);
+});
+
+function clearFilters() {
+    document.getElementById('filterForm').reset();
+    document.getElementById('searchInput').value = '';
+    const params = new URLSearchParams();
+    updateProductList(params);
+    document.querySelectorAll('.vault-filter-item').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.vault-brand-chip').forEach(el => el.classList.remove('active'));
+}
+
+function addToWishlist(productId) {
+    fetch('/addWishlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: productId })
+    })
+    .then(r => r.json())
+    .then(data => {
+        Swal.fire({
+            icon: data.success ? 'success' : 'info',
+            title: data.success ? 'Added to Wishlist' : 'Notice',
+            text: data.message,
+            confirmButtonColor: '#ff7700'
         });
+    })
+    .catch(() => {
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Something went wrong' });
+    });
+}
 
-        // Initial pagination event listeners
-        document.querySelectorAll('.pagination a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = new URLSearchParams(link.href.split('?')[1]).get('page');
-                const params = new URLSearchParams(window.location.search);
-                params.set('page', page);
-                updateProductList(params);
+function addToCart(productId) {
+    fetch('/addToCart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: productId })
+    })
+    .then(async response => {
+        if (response.status === 401 || response.redirected) {
+            window.location.href = '/login';
+            return;
+        }
+        const data = await response.json();
+        if (data && data.redirect) {
+            window.location.href = data.redirect;
+            return;
+        }
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Added to Bag',
+                text: data.message,
+                timer: 2000,
+                showConfirmButton: false
             });
-        });
-
-        // Add to cart and wishlist functions
-        // Update the addToCart function
-        function addToCart(productId) {
-            fetch('/addToCart', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ id: productId })
-            })
-            .then(async response => {
-                const data = await response.json();
-                
-                // Handle unauthorized access
-                if (response.status === 401) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Authentication Required',
-                        text: 'Please login to add items to cart',
-                        showCancelButton: true,
-                        confirmButtonText: 'Login',
-                        cancelButtonText: 'Cancel'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = '/login';
-                        }
-                    });
-                    return;
-                }
-
-                // Handle other responses
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: data.message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Alert',
-                        text: data.message
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Something went wrong while adding to cart'
-                });
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Notice',
+                text: data.message,
+                confirmButtonColor: '#ff7700'
             });
         }
-
-        function addToWishlist(productId) {
-            fetch('/addWishlist', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ id: productId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire("Success", data.message, "success");
-                } else {
-                    Swal.fire("Alert", data.message, "warning");
-                }
-            })
-            .catch(error => {
-                Swal.fire("Error", "Something went wrong", "error");
-            });
-        }
-    </script>
-
-    <script src="js/vendor/jquery-2.2.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-    <script src="js/vendor/bootstrap.min.js"></script>
-    <script src="js/jquery.ajaxchimp.min.js"></script>
-    <script src="js/jquery.nice-select.min.js"></script>
-    <script src="js/jquery.sticky.js"></script>
-    <script src="js/nouislider.min.js"></script>
-    <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
-    <script src="js/gmaps.min.js"></script>
-    <script src="js/main.js"></script>
-</body>
-</html>
+    })
+    .catch(() => {
+        Swal.fire({ icon: 'error', title: 'Cart Error', text: 'Failed to update bag' });
+    });
+}
+</script>

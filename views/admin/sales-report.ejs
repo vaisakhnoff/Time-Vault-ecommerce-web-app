@@ -1,6 +1,11 @@
 <%- include("../../views/partials/admin/header") %>
-<div class="container-fluid px-4">
-    <h1 class="mt-4">Sales Report</h1>
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Sales Intelligence Report</h2>
+            <p class="content-subtitle">Exportable financial audits, orders, and coupon discounts</p>
+        </div>
+    </div>
     
     <!-- Filter Controls -->
     <div class="card mb-4">
@@ -94,8 +99,9 @@
             <i class="fas fa-table me-1"></i>
             Sales Details
         </div>
-        <div class="card-body">
-            <table id="salesTable" class="table table-bordered">
+        <div class="card-body p-0">
+            <div class="table-responsive-modern">
+                <table id="salesTable" class="table align-middle">
                 <thead>
                     <tr>
                         <th>Order ID</th>
@@ -170,7 +176,7 @@
             </nav>
         </div>
     </div>
-</div>
+</section>
 
 <script>
 document.getElementById('filterType').addEventListener('change', function() {

@@ -1,12 +1,19 @@
 <%- include("../../views/partials/user/header") %>
 
-<!-- Add a gap between header and order details -->
-<div class="header-gap"></div><!-- Spacer to create gap between header and contents -->
-<div style="height: 100px;"></div>
-
-<section class="checkout_page section_gap">
+<main class="vault-page-wrapper">
   <div class="container">
-    <h1>Checkout</h1>
+    <div class="vault-breadcrumb-pill">
+      <a href="/">Home</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <a href="/cartPage">Shopping Bag</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <span class="active-crumb">Secure Checkout</span>
+    </div>
+
+    <div class="mb-4">
+      <h1 class="vault-page-title">Secure <span class="vault-gold-text">Checkout</span></h1>
+      <p class="vault-page-subtitle">Verify your allocation details, delivery address, and payment protocol.</p>
+    </div>
 
     <!-- Product Details Section -->
     <div class="cart_products">
@@ -186,13 +193,16 @@
         </div>
 
         <!-- Place Order Button -->
-        <button type="submit" class="btn btn-primary">
-          Place Order
-        </button>
+        <div class="mt-4">
+          <button type="submit" class="vault-btn-primary" style="padding: 14px 34px; font-size: 16px; cursor: pointer;">
+            <span>Place Order</span>
+            <i class="ti-arrow-right"></i>
+          </button>
+        </div>
       </form>
     </div>
   </div>
-</section>
+</main>
 
 <!-- Include Razorpay Checkout script and SweetAlert2 -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

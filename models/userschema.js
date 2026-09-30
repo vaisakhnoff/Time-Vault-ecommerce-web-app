@@ -35,7 +35,8 @@ const userschema =  new Schema({
       googleId:{
         type : String,
         required : false,
-        unique : true
+        unique : true,
+        sparse : true
       },
       password:{
         type : String,
@@ -72,7 +73,8 @@ const userschema =  new Schema({
       },
       referalCode: {
         type: String,
-        unique: true
+        unique: true,
+        sparse: true
       },
       
       redeemed:{

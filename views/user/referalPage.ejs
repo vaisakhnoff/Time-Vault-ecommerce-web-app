@@ -1,44 +1,40 @@
 <%- include("../../views/partials/user/header") %>
-<!-- Spacer to create gap between header and contents -->
-<div style="height: 100px;"></div>
 
 <style>
-.referral-section {
-    padding: 60px 0;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
-}
-
 .referral-card {
     background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: var(--vault-radius-lg);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    border: 1px solid #e2e8f0;
     overflow: hidden;
-    margin: 20px auto;
-    max-width: 1000px;
+    margin: 0 auto 30px;
+    max-width: 950px;
 }
 
 .referral-header {
-    background: linear-gradient(135deg, #f5e507, #bcdb2e);
-    padding: 30px;
+    background: var(--vault-gold-gradient);
+    padding: 40px 30px;
     text-align: center;
     color: white;
 }
 
 .referral-header h2 {
-    font-size: 2.5em;
-    margin-bottom: 15px;
-    font-weight: 700;
+    font-size: 2.3em;
+    margin-bottom: 10px;
+    font-weight: 800;
+    color: #ffffff;
 }
 
 .referral-header p {
     font-size: 1.1em;
-    opacity: 0.9;
+    opacity: 0.95;
+    margin-bottom: 0;
 }
 
 .how-it-works {
-    background: #f8faff;
-    padding: 30px;
-    border-bottom: 1px solid #eee;
+    background: #f8fafc;
+    padding: 35px 30px;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .steps-container {
@@ -53,32 +49,46 @@
     flex: 1;
     min-width: 250px;
     text-align: center;
-    padding: 20px;
+    padding: 15px;
 }
 
 .step-number {
-    width: 40px;
-    height: 40px;
-    background: #d5d23a;
+    width: 44px;
+    height: 44px;
+    background: var(--vault-gold-gradient);
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 15px;
-    font-weight: bold;
+    font-weight: 800;
+    font-size: 16px;
+    box-shadow: var(--vault-gold-glow);
+}
+
+.step-item h4 {
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.step-item p {
+    color: #64748b;
+    font-size: 14px;
 }
 
 .referral-code-section {
-    padding: 40px;
+    padding: 40px 30px;
     text-align: center;
 }
 
 .code-container {
-    background: #f8faff;
-    border: 2px dashed #3a7bd5;
-    border-radius: 12px;
-    padding: 20px;
+    background: #fff7ed;
+    border: 2px dashed #fed7aa;
+    border-radius: 14px;
+    padding: 16px 28px;
     display: inline-flex;
     align-items: center;
     gap: 15px;
@@ -87,209 +97,183 @@
 
 #referral-code {
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 2px;
-    color: #3a7bd5;
+    color: #ea580c;
 }
 
 .copy-btn {
-    background: #3a7bd5;
+    background: var(--vault-gold-gradient);
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 10px 22px;
+    border-radius: 9999px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: var(--vault-gold-glow);
+    transition: all 0.2s ease;
 }
 
 .copy-btn:hover {
-    background: #2c5ea1;
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 122, 0, 0.4);
 }
 
 .earnings-badge {
-    background: linear-gradient(135deg, #00b09b, #96c93d);
-    color: white;
-    padding: 15px 30px;
-    border-radius: 50px;
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+    padding: 12px 28px;
+    border-radius: 9999px;
     display: inline-block;
-    font-size: 1.2em;
-    font-weight: 600;
-    margin: 20px 0;
+    font-size: 1.1em;
+    font-weight: 700;
+    margin: 15px 0;
 }
 
-.dashboard-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin: 20px 0;
+.redeemed-users {
+    padding: 30px;
+    border-top: 1px solid #e2e8f0;
 }
 
-.dashboard-table th {
-    background: #f1f5f9;
-    padding: 15px;
-    font-weight: 600;
-    text-align: left;
-    color: #334155;
+.users-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
 }
 
-.dashboard-table td {
-    padding: 15px;
-    border-bottom: 1px solid #eee;
+.user-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 12px 16px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.dashboard-table tr:last-child td {
-    border-bottom: none;
-}
-
-.pagination-wrap {
-    padding: 20px;
-    text-align: center;
-}
-
-.pagination {
-    display: inline-flex;
-    gap: 5px;
-}
-
-.page-item.active .page-link {
-    background: #3a7bd5;
-    border-color: #3a7bd5;
-}
-
-.page-link {
-    color: #3a7bd5;
-    padding: 8px 16px;
-    border-radius: 8px;
+.user-icon {
+    width: 36px;
+    height: 36px;
+    background: #fff7ed;
+    color: #ff7700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @media (max-width: 768px) {
-    .step-item {
-        min-width: 100%;
+    .referral-header h2 {
+        font-size: 1.8em;
     }
-    
     .code-container {
         flex-direction: column;
-    }
-    
-    .dashboard-table {
-        display: block;
-        overflow-x: auto;
+        width: 100%;
     }
 }
 </style>
 
-<section class="referral-section">
+<main class="vault-page-wrapper">
+  <div class="container">
+    <!-- Breadcrumb Pill -->
+    <div class="vault-breadcrumb-pill">
+      <a href="/">Home</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <a href="/userProfile">Account</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <span class="active-crumb">Referral Program</span>
+    </div>
+
     <div class="referral-card">
         <div class="referral-header">
-            <h2>Invite Friends & Earn Rewards</h2>
-            <p>Share your referral code and both you and your friend get ₹100!</p>
+            <h2>Invite Patrons & Earn Allocation Credits</h2>
+            <p>Share your exclusive invite code. When a friend joins the Vault, you both receive ₹100 credit.</p>
         </div>
 
         <div class="how-it-works">
-            <h3 class="text-center mb-4">How It Works</h3>
+            <h4 class="text-center mb-4" style="font-weight: 800; color: #0f172a;">Provenance Protocol</h4>
             <div class="steps-container">
                 <div class="step-item">
                     <div class="step-number">1</div>
-                    <h4>Share Code</h4>
-                    <p>Share your unique referral code with friends</p>
+                    <h4>Share Invite</h4>
+                    <p>Share your unique patron referral code with fellow horology enthusiasts.</p>
                 </div>
                 <div class="step-item">
                     <div class="step-number">2</div>
-                    <h4>Friend Signs Up</h4>
-                    <p>They create an account using your code</p>
+                    <h4>Account Creation</h4>
+                    <p>Your guest registers their Time Vault account using your invite code.</p>
                 </div>
                 <div class="step-item">
                     <div class="step-number">3</div>
-                    <h4>Both Earn</h4>
-                    <p>You both get ₹100 in your wallets!</p>
+                    <h4>Instant Allocation</h4>
+                    <p>Both wallets immediately receive ₹100 in Vault allocation credits.</p>
                 </div>
             </div>
         </div>
 
         <div class="referral-code-section">
-            <h3>Your Referral Code</h3>
+            <h4 style="font-weight: 800; color: #0f172a;">Your Personal Invite Code</h4>
             <div class="code-container">
                 <strong id="referral-code"><%= user.referalCode %></strong>
                 <button class="copy-btn" onclick="copyReferralCode()">
-                    <i class="fi-rs-copy"></i> Copy Code
+                    <i class="ti-files mr-1"></i> Copy Code
                 </button>
             </div>
             
-            <div class="earnings-badge">
-                Total Earned: ₹<%= ((user.redeemedUsers ? user.redeemedUsers.length : 0) * 100) %>
-            </div>
-
             <div>
-                <h6 class="fw-bold mb-3">Redeemed Referrals</h6>
-                <% if (referrals && referrals.length > 0) { %>
-                    <div class="table-responsive">
-                        <table class="dashboard-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Date Joined</th>
-                                    <th>Reward</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% referrals.forEach(ref => { %>
-                                    <tr>
-                                        <td><%= ref.firstName %> <%= ref.lastName %></td>
-                                        <td><%= ref.email %></td>
-                                        <td><%= new Date(ref.createdOn).toLocaleDateString() %></td>
-                                        <td>₹100</td>
-                                    </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <!-- Pagination -->
-                    <div class="pagination-wrap mt-4">
-                        <nav>
-                            <ul class="pagination justify-content-center">
-                                <% for (let i = 1; i <= totalPages; i++) { %>
-                                    <li class="page-item <%= currentPage == i ? 'active' : '' %>">
-                                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                                    </li>
-                                <% } %>
-                            </ul>
-                        </nav>
-                    </div>
-                <% } else { %>
-                    <div class="text-center p-4">
-                        <p>No referrals redeemed yet. Share your code and start earning!</p>
-                    </div>
-                <% } %>
+                <div class="earnings-badge">
+                    Total Credits Earned: ₹<%= ((user.redeemedUsers ? user.redeemedUsers.length : 0) * 100) %>
+                </div>
             </div>
         </div>
+
+        <% if (user.redeemedUsers && user.redeemedUsers.length > 0) { %>
+        <div class="redeemed-users">
+            <h5 style="font-weight: 800; color: #0f172a; margin-bottom: 15px;">Enrolled Patrons</h5>
+            <div class="users-list">
+                <% user.redeemedUsers.forEach(function(redeemedUser) { %>
+                    <div class="user-item">
+                        <div class="user-icon">
+                            <i class="ti-user"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #0f172a; font-size: 14px;"><%= redeemedUser.name || 'Collector' %></strong>
+                            <small class="text-muted d-block"><%= redeemedUser.email || 'Verified' %></small>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+        <% } %>
     </div>
-</section>
+  </div>
+</main>
 
 <script>
     function copyReferralCode() {
         var codeElement = document.getElementById("referral-code");
         var text = codeElement.innerText.trim();
         if (text === 'Not Available') {
-            alert('No referral code available');
+            Swal.fire('Notice', 'No referral code available', 'info');
             return;
         }
         navigator.clipboard.writeText(text)
         .then(() => {
             const copyBtn = document.querySelector('.copy-btn');
-            const originalText = copyBtn.innerHTML;
-            copyBtn.innerHTML = '<i class="fi-rs-check"></i> Copied!';
+            const originalHtml = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="ti-check mr-1"></i> Copied!';
             setTimeout(() => {
-                copyBtn.innerHTML = originalText;
+                copyBtn.innerHTML = originalHtml;
             }, 2000);
         })
         .catch(err => {
             console.error("Failed to copy referral code: ", err);
-            alert('Failed to copy referral code');
+            Swal.fire('Notice', 'Failed to copy code', 'error');
         });
     }
 </script>
 
-<%-include("../../views/partials/user/footer")%>
+<%- include("../../views/partials/user/footer") %>

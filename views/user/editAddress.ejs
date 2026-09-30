@@ -1,67 +1,57 @@
 <%- include("../../views/partials/user/header") %>
 
 <style>
-  .address-form-container {
-    margin-top: 150px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #fff;
-  }
-  
-  .address-form-container h3 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
   .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 18px;
   }
   
   .form-group label {
     display: block;
-    font-weight: bold;
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 14px;
+    margin-bottom: 6px;
   }
   
   .form-control {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 10px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
   }
   
-  .btn-primary {
-    background-color: #007bff;
-    border: none;
-    padding: 10px 20px;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-
   .is-invalid {
     border-color: #dc3545 !important;
-}
+  }
 
-.invalid-feedback {
+  .invalid-feedback {
     color: #dc3545;
     font-size: 0.875rem;
     margin-top: 0.25rem;
     display: block;
-}
+  }
 
-select.form-control {
+  select.form-control {
     appearance: auto;
     -webkit-appearance: auto;
     -moz-appearance: auto;
-}
+  }
 </style>
 
-<div class="container address-form-container">
-  <h3>Edit Address</h3>
+<main class="vault-page-wrapper">
+  <div class="container">
+    <div class="vault-breadcrumb-pill">
+      <a href="/">Home</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <a href="/userProfile">Profile</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <a href="/userAddress">Address Book</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <span class="active-crumb">Edit Address</span>
+    </div>
+
+    <div class="vault-card" style="max-width: 600px; margin: 0 auto;">
+      <h3 class="text-center mb-4" style="font-weight: 800; color: #0f172a;">Edit Delivery Destination</h3>
   <form id="updateAddressForm">
     <!-- Hidden field for address ID and context -->
     <input type="hidden" name="addressId" value="<%= address._id %>">
@@ -153,9 +143,14 @@ select.form-control {
         required>
     </div>
     
-    <button type="submit" class="btn btn-primary">Update Address</button>
+    <button type="submit" class="vault-btn-primary w-100 justify-content-center mt-3" style="cursor: pointer;">
+      <span>Update Address</span>
+      <i class="ti-arrow-right"></i>
+    </button>
   </form>
-</div>
+    </div>
+  </div>
+</main>
 
 <!-- Include SweetAlert -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -49,13 +49,15 @@ $(document).ready(function(){
     Javascript for banner area carousel
     ==================================*/
     $(".active-banner-slider").owlCarousel({
-        items:1,
-        autoplay:false,
-        autoplayTimeout: 5000,
-        loop:true,
-        nav:true,
-        navText:["<img src='img/banner/prev.png'>","<img src='img/banner/next.png'>"],
-        dots:false
+        items: 1,
+        autoplay: true,
+        autoplayTimeout: 4500,
+        autoplayHoverPause: true,
+        smartSpeed: 700,
+        loop: true,
+        nav: true,
+        navText: ["<i class='ti-arrow-left' style='font-size:16px;'></i>", "<i class='ti-arrow-right' style='font-size:16px;'></i>"],
+        dots: true
     });
 
     /*=================================

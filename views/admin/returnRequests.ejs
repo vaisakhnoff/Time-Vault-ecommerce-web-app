@@ -1,71 +1,119 @@
 <%- include("../../views/partials/admin/header") %>
 
-<div class="container mt-5">
-  <h1>Return Requests</h1>
-
-  <div class="card">
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Customer</th>
-              <th>Order Date</th>
-              <th>Product</th>
-              <th>Reason</th>
-              <th>Amount</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% if(returnRequests && returnRequests.length > 0) { %>
-              <% returnRequests.forEach(request => { %>
-                <tr>
-                  <td>
-                    <a href="/admin/order/<%= request.orderId %>">
-                      <%= request.orderId %>
-                    </a>
-                  </td>
-                  <td>
-                    <%= request.customer ? `${request.customer.firstName} ${request.customer.lastName}` : 'N/A' %>
-                  </td>
-                  <td>
-                    <%= formatDate(request.orderDate) %>
-                  </td>
-                  <td>
-                    <%= request.product ? request.product.productName : 'Product Not Found' %>
-                  </td>
-                  <td><%= request.reason || 'No reason provided' %></td>
-                  <td>₹<%= request.amount ? request.amount.toFixed(2) : '0.00' %></td>
-                  <td>
-                    <div class="btn-group">
-                      <button class="btn btn-success btn-sm" 
-                              onclick="processReturn('<%= request.orderId %>', true, '<%= request.product._id %>')">
-                        Approve
-                      </button>
-                      <button class="btn btn-danger btn-sm" 
-                              onclick="processReturn('<%= request.orderId %>', false, '<%= request.product._id %>')">
-                        Decline
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              <% }); %>
-            <% } else { %>
-              <tr>
-                <td colspan="7" class="text-center">No return requests found</td>
-              </tr>
-            <% } %>
-          </tbody>
-        </table>
-      </div>
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Return Requests</h2>
+            <p class="content-subtitle">Review, approve, or reject customer return and refund requests</p>
+        </div>
     </div>
-  </div>
-</div>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0" style="font-size: 1rem; font-weight: 600;">Pending Return Requests</h5>
+            <span class="badge bg-light text-dark" style="border: 1px solid var(--tv-border); font-size: 0.8rem;">
+                <%= returnRequests ? returnRequests.length : 0 %> Requests
+            </span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive-modern">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Order Date</th>
+                            <th>Product</th>
+                            <th>Return Reason</th>
+                            <th>Refund Amount</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if(returnRequests && returnRequests.length > 0) { %>
+                            <% returnRequests.forEach(request => { %>
+                                <tr>
+                                    <td>
+                                        <a href="/admin/order/<%= request.orderId %>" style="font-family: monospace; font-weight: 700; color: var(--tv-primary);">
+                                            #<%= request.orderId %>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="tv-user-avatar" style="width: 30px; height: 30px; font-size: 0.75rem;">
+                                                <%= (request.customer && request.customer.firstName ? request.customer.firstName.charAt(0) : 'C').toUpperCase() %>
+                                            </div>
+                                            <span style="font-weight: 600; color: var(--tv-text-main);">
+                                                <%= request.customer ? `${request.customer.firstName} ${request.customer.lastName || ''}` : 'Customer' %>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted" style="font-size: 0.85rem;">
+                                            <%= formatDate(request.orderDate) %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 600; max-width: 200px;" class="text-truncate" title="<%= request.product ? request.product.productName : '' %>">
+                                            <%= request.product ? request.product.productName : 'Product' %>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="tv-badge tv-badge-warning" style="max-width: 180px;" title="<%= request.reason %>">
+                                            <span class="tv-badge-dot"></span> <%= request.reason || 'Reason not provided' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span style="font-weight: 700; color: var(--tv-text-main);">
+                                            ₹<%= request.amount ? request.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00' %>
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="d-inline-flex gap-2">
+                                            <button class="btn btn-sm btn-success" 
+                                                    onclick="processReturn('<%= request.orderId %>', true, '<%= request.product ? request.product._id : '' %>')">
+                                                <i class="material-icons md-check" style="font-size: 0.9rem;"></i> Approve
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" 
+                                                    onclick="processReturn('<%= request.orderId %>', false, '<%= request.product ? request.product._id : '' %>')">
+                                                <i class="material-icons md-close" style="font-size: 0.9rem;"></i> Decline
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="material-icons md-assignment_turned_in" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                                        <p class="mt-2 mb-0">No pending return requests found</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
 
 <script>
 async function processReturn(orderId, approve, productId) {
+  const actionText = approve ? "approve" : "decline";
+  const result = await Swal.fire({
+    title: `${approve ? 'Approve' : 'Decline'} Return?`,
+    text: `Are you sure you want to ${actionText} this return request?`,
+    icon: approve ? 'question' : 'warning',
+    showCancelButton: true,
+    confirmButtonColor: approve ? '#10b981' : '#ef4444',
+    cancelButtonColor: '#64748b',
+    confirmButtonText: `Yes, ${actionText}`
+  });
+
+  if (!result.isConfirmed) return;
+
   try {
     const response = await fetch('/admin/process-return-request', {
       method: 'POST',
@@ -86,7 +134,7 @@ async function processReturn(orderId, approve, productId) {
     }
   } catch (error) {
     console.error('Error:', error);
-    Swal.fire('Error', 'Something went wrong', 'error');
+    Swal.fire('Error', 'Something went wrong processing request', 'error');
   }
 }
 </script>

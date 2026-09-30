@@ -84,15 +84,37 @@ const addProducts = async(req,res)=>{
         }
 
         const images = [];
-        if(req.files && req.files.length>0){
-            for(let i=0;i<req.files.length;i++){
+        if (req.files && req.files.length > 0) {
+            for (let i = 0; i < req.files.length; i++) {
                 const originalImagePath = req.files[i].path;
+                const parsed = path.parse(req.files[i].filename);
+                let ext = parsed.ext.toLowerCase();
 
-                const resizedFileName = 'resized-' + req.files[i].filename;
+                // Ensure browser-safe output format for heic, heif, tiff, bmp, etc.
+                let targetExt = ext;
+                if (['.heic', '.heif', '.tiff', '.tif', '.bmp', '.avif'].includes(ext) || !ext) {
+                    targetExt = '.jpeg';
+                }
+
+                const resizedFileName = 'resized-' + parsed.name + targetExt;
                 const resizedImagePath = path.join('public', 'uploads', 'product-images', resizedFileName);
-                await sharp(originalImagePath)
-                    .resize({ width: 450, height: 440 })
-                    .toFile(resizedImagePath);
+
+                let pipeline = sharp(originalImagePath).resize({ width: 450, height: 440, fit: 'cover' });
+                if (targetExt === '.jpeg' || targetExt === '.jpg') {
+                    pipeline = pipeline.jpeg({ quality: 90 });
+                } else if (targetExt === '.webp') {
+                    pipeline = pipeline.webp({ quality: 90 });
+                } else if (targetExt === '.png') {
+                    pipeline = pipeline.png();
+                }
+
+                await pipeline.toFile(resizedImagePath);
+
+                // Clean up original upload if distinct from resized output
+                if (fs.existsSync(originalImagePath) && originalImagePath !== resizedImagePath) {
+                    try { fs.unlinkSync(originalImagePath); } catch (e) {}
+                }
+
                 images.push(resizedFileName);
             }
         }
@@ -243,16 +265,31 @@ const editProduct = async (req, res) => {
 
             images = [];
             for (const file of req.files) {
-                const resizedFileName = 'resized-' + file.filename;
+                const parsed = path.parse(file.filename);
+                let ext = parsed.ext.toLowerCase();
+
+                let targetExt = ext;
+                if (['.heic', '.heif', '.tiff', '.tif', '.bmp', '.avif'].includes(ext) || !ext) {
+                    targetExt = '.jpeg';
+                }
+
+                const resizedFileName = 'resized-' + parsed.name + targetExt;
                 const resizedImagePath = path.join('public', 'uploads', 'product-images', resizedFileName);
                 
-                await sharp(file.path)
-                    .resize({ width: 450, height: 440 })
-                    .toFile(resizedImagePath);
+                let pipeline = sharp(file.path).resize({ width: 450, height: 440, fit: 'cover' });
+                if (targetExt === '.jpeg' || targetExt === '.jpg') {
+                    pipeline = pipeline.jpeg({ quality: 90 });
+                } else if (targetExt === '.webp') {
+                    pipeline = pipeline.webp({ quality: 90 });
+                } else if (targetExt === '.png') {
+                    pipeline = pipeline.png();
+                }
+
+                await pipeline.toFile(resizedImagePath);
 
                 // Delete the original uploaded file
-                if (fs.existsSync(file.path)) {
-                    fs.unlinkSync(file.path);
+                if (fs.existsSync(file.path) && file.path !== resizedImagePath) {
+                    try { fs.unlinkSync(file.path); } catch (e) {}
                 }
                 
                 images.push(resizedFileName);

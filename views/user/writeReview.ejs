@@ -2,14 +2,20 @@
 <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-material-ui/material-ui.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-<div class="container mt-5">
+<main class="vault-page-wrapper">
+  <div class="container">
+    <div class="vault-breadcrumb-pill">
+      <a href="/">Home</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <a href="/orders">Orders</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <span class="active-crumb">Submit Patron Review</span>
+    </div>
+
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Write a Review</h3>
-                </div>
-                <div class="card-body">
+      <div class="col-lg-8">
+        <div class="vault-card">
+          <h3 class="mb-4" style="font-weight: 800; color: #0f172a;">Patron Critique & Review</h3>
                     <div class="product-info mb-4">
                         <div class="d-flex">
                             <img src="/uploads/product-images/<%= product.productImage[0] %>" 
@@ -62,19 +68,22 @@
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-between">
-                            <button type="button" class="btn btn-secondary" 
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <button type="button" class="vault-btn-glass" 
                                     onclick="window.location.href='/order/<%= order._id %>'">
                                 Cancel
                             </button>
-                            <button type="submit" class="btn btn-primary">Submit Review</button>
+                            <button type="submit" class="vault-btn-primary" style="cursor: pointer;">
+                                <span>Submit Review</span>
+                                <i class="ti-arrow-right"></i>
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</main>
 
 <style>
 .rating {

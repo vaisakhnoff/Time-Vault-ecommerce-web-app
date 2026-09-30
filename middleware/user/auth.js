@@ -5,6 +5,10 @@ const User = require('../../models/userschema')
 
 
 const checkSession = (req, res, next) => {
+    const isJsonRequest = req.xhr || 
+      (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) ||
+      (req.headers.accept && req.headers.accept.includes('application/json'));
+
     if (req.session.user) {
       User.findById(req.session.user)
         .then(data => {
@@ -17,6 +21,9 @@ const checkSession = (req, res, next) => {
               if (err) {
                 console.error("Session destruction error:", err);
               }
+              if (isJsonRequest) {
+                return res.status(401).json({ success: false, message: "User not authenticated", redirect: "/login" });
+              }
               return res.redirect('/login');
             });
           }
@@ -26,6 +33,9 @@ const checkSession = (req, res, next) => {
           res.status(500).send("Internal server error");
         });
     } else {
+      if (isJsonRequest) {
+        return res.status(401).json({ success: false, message: "User not authenticated", redirect: "/login" });
+      }
       res.redirect('/login');
     }
   };

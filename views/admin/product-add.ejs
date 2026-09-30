@@ -237,7 +237,7 @@
     </style>
 </head>
 
-<main class="product-form-container">
+<section class="content-main product-form-container">
     <div class="form-card">
         <div class="form-card-header">
             <h2 class="form-title">Add New Product</h2>
@@ -346,7 +346,7 @@
                                             type="file" 
                                             name="images" 
                                             id="input<%= i %>" 
-                                            accept="image/png, image/jpeg, image/jpg"
+                                            accept="image/*, .jpg, .jpeg, .png, .webp, .heic, .heif, .avif, .gif, .bmp"
                                             onchange="handleImageUpload(event, <%= i %>)">
                                     </div>
                                     <div class="cropper-container d-none" id="cropperContainer<%= i %>">
@@ -377,87 +377,110 @@
             </form>
         </div>
     </div>
-</main>
+</section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 <script>
 // Global variables
 const croppers = {};
-const maxFileSize = 5 * 1024 * 1024; // 5MB
+const maxFileSize = 10 * 1024 * 1024; // 10MB to accommodate high-res mobile photos
 
-// Handle image upload and initialize cropper
-function handleImageUpload(event, index) {
-    const file = event.target.files[0];
+// Handle image upload and initialize cropper (supports JPG, PNG, WEBP, HEIC, HEIF, etc.)
+async function handleImageUpload(event, index) {
+    const originalFile = event.target.files[0];
     const input = event.target;
+    if (!originalFile) return;
     
     // Validate file size
-    if (file && file.size > maxFileSize) {
-        if (Swal.isVisible()) {
-            Swal.close();
-        }
+    if (originalFile.size > maxFileSize) {
+        if (Swal.isVisible()) Swal.close();
         Swal.fire({
             icon: 'error',
             title: 'File Too Large',
-            text: 'Please select an image under 5MB',
+            text: 'Please select an image under 10MB',
             confirmButtonColor: '#3a86ff'
         });
         input.value = '';
         return;
     }
 
-    if (file) {
-        // Show loading state
-        if (Swal.isVisible()) {
-            Swal.close();
+    let fileToProcess = originalFile;
+    const lowerName = originalFile.name.toLowerCase();
+    const isHeic = lowerName.endsWith('.heic') || lowerName.endsWith('.heif') || originalFile.type === 'image/heic' || originalFile.type === 'image/heif';
+
+    // Show loading state
+    if (Swal.isVisible()) Swal.close();
+    Swal.fire({
+        title: isHeic ? 'Converting HEIC Photo...' : 'Processing Image...',
+        text: isHeic ? 'Converting your high-efficiency iPhone photo...' : 'Please wait...',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        willOpen: () => { Swal.showLoading(); }
+    });
+
+    if (isHeic) {
+        try {
+            const convertedBlob = await heic2any({
+                blob: originalFile,
+                toType: 'image/jpeg',
+                quality: 0.92
+            });
+            const blobResult = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+            fileToProcess = new File(
+                [blobResult], 
+                originalFile.name.replace(/\.(heic|heif)$/i, '.jpg'), 
+                { type: 'image/jpeg' }
+            );
+        } catch (conversionErr) {
+            console.warn('HEIC conversion warning in browser:', conversionErr);
         }
-        Swal.fire({
-            title: 'Processing Image',
-            text: 'Please wait...',
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            willOpen: () => {
-                Swal.showLoading();
-            }
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        if (croppers[index]) {
+            croppers[index].destroy();
+            delete croppers[index];
+        }
+
+        const cropperImage = document.getElementById(`cropperImage${index}`);
+        const cropperContainer = document.getElementById(`cropperContainer${index}`);
+        
+        document.getElementById(`imgView${index}`).classList.add('d-none');
+        document.getElementById(`placeholder${index}`).classList.add('d-none');
+        cropperContainer.classList.remove('d-none');
+        
+        cropperImage.src = e.target.result;
+        
+        croppers[index] = new Cropper(cropperImage, {
+            aspectRatio: 1,
+            viewMode: 2,
+            dragMode: 'move',
+            autoCropArea: 1,
+            restore: false,
+            guides: true,
+            center: true,
+            highlight: false,
+            cropBoxMovable: true,
+            cropBoxResizable: true,
+            toggleDragModeOnDblclick: false,
+            zoomable: true
         });
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            // Destroy existing cropper if any
-            if (croppers[index]) {
-                croppers[index].destroy();
-                delete croppers[index];
-            }
+        Swal.close();
+    };
 
-            const cropperImage = document.getElementById(`cropperImage${index}`);
-            const cropperContainer = document.getElementById(`cropperContainer${index}`);
-            
-            // Hide preview and show cropper
-            document.getElementById(`imgView${index}`).classList.add('d-none');
-            document.getElementById(`placeholder${index}`).classList.add('d-none');
-            cropperContainer.classList.remove('d-none');
-            
-            cropperImage.src = e.target.result;
-            
-            // Initialize cropper
-            croppers[index] = new Cropper(cropperImage, {
-                aspectRatio: 1,
-                viewMode: 2,
-                dragMode: 'move',
-                autoCropArea: 1,
-                restore: false,
-                guides: true,
-                center: true,
-                highlight: false,
-                cropBoxMovable: true,
-                cropBoxResizable: true,
-                toggleDragModeOnDblclick: false,
-                zoomable: true
-            });
+    reader.onerror = function() {
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Image Load Error',
+            text: 'Could not read the selected image file. Please try another format.'
+        });
+    };
 
-            Swal.close();
-        };
-        reader.readAsDataURL(file);
-    }
+    reader.readAsDataURL(fileToProcess);
 }
 
 // Save cropped image

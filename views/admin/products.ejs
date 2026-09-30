@@ -1,476 +1,216 @@
 <%- include("../../views/partials/admin/header") %>
-<head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css" />
-  <style>
-    /* Main layout styles */
-    .content-wrapper {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-    
-    /* Card and table styles */
-    .card {
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-      transition: box-shadow 0.3s ease;
-      margin: 0;
-    }
-    
-    .card:hover {
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-    }
-    
-    .card-body {
-      padding: 0;
-    }
-    
-    .table {
-      table-layout: auto;
-      width: 100%;
-      margin-bottom: 0;
-      min-width: 1000px; /* Base minimum width */
-    }
-    
-    /* Column-specific widths */
-    .table th:first-child, 
-    .table td:first-child {
-      min-width: 200px; /* Product name column */
-    }
-    
-    .table th:nth-child(2), 
-    .table td:nth-child(2),
-    .table th:nth-child(3), 
-    .table td:nth-child(3) {
-      min-width: 120px; /* Brand and Category columns */
-    }
-    
-    .table th:nth-child(4), 
-    .table td:nth-child(4),
-    .table th:nth-child(5), 
-    .table td:nth-child(5) {
-      min-width: 100px; /* Price columns */
-    }
-    
-    .table th:nth-child(6), 
-    .table td:nth-child(6) {
-      min-width: 180px; /* Offer column */
-    }
-    
-    .table th:nth-child(7), 
-    .table td:nth-child(7) {
-      min-width: 80px; /* Stock column */
-    }
-    
-    .table th:nth-child(8), 
-    .table td:nth-child(8) {
-      min-width: 180px; /* Manage Offers column */
-    }
-    
-    .table th:nth-child(9), 
-    .table td:nth-child(9) {
-      min-width: 100px; /* Actions column */
-    }
-    
-    /* Table cell styling */
-    .table td {
-      vertical-align: middle;
-      word-wrap: break-word;
-      padding: 16px;
-      font-size: 0.95rem;
-      white-space: normal;
-      line-height: 1.4;
-    }
-    
-    /* Responsive container */
-    .table-responsive {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      margin: 0 -1px; /* Prevent horizontal scrollbar from being cut off */
-      padding: 1px; /* Ensure borders are visible */
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 1200px) {
-      .content-wrapper {
-        padding: 0 15px;
-      }
-      
-      .table-responsive {
-        margin: 0 -15px;
-        padding: 0 15px;
-        border-radius: 0;
-      }
-    }
-    
-    /* Badge styling */
-    .badge {
-      font-size: 0.8rem;
-      padding: 0.4em 0.7em;
-      border-radius: 50px;
-      font-weight: 500;
-      display: inline-block;
-      margin: 2px;
-    }
-    
-    .badge.bg-info {
-      background-color: #17a2b8 !important;
-    }
-    
-    .badge.bg-success {
-      background-color: #28a745 !important;
-    }
-    
-    .badge.bg-warning {
-      background-color: #ffc107 !important;
-      color: #212529;
-    }
-    
-    .badge.bg-secondary {
-      background-color: #6c757d !important;
-    }
-    
-    /* Button styles */
-    .btn {
-      border-radius: 6px;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
-    
-    .btn-primary {
-      background-color: #0d6efd;
-      border-color: #0d6efd;
-    }
-    
-    .btn-primary:hover {
-      background-color: #0b5ed7;
-      border-color: #0a58ca;
-    }
-    
-    .btn-sm {
-      padding: 0.375rem 0.75rem;
-      font-size: 0.875rem;
-    }
-    
-    .action-btn {
-      width: auto !important;
-      min-width: 110px;
-      margin: 2px;
-      display: inline-block;
-      text-align: center;
-      font-size: 0.8rem;
-      transition: transform 0.1s ease;
-    }
-    
-    .action-btn:hover {
-      transform: translateY(-2px);
-    }
-    
-    .btn-group-action {
-      display: flex;
-      gap: 6px;
-      justify-content: flex-start;
-      flex-wrap: wrap;
-    }
-    
-    /* Pagination styles */
-    .pagination {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-    }
-    
-    .page-item.active .page-link {
-      background-color: #0d6efd;
-      border-color: #0d6efd;
-      box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
-    }
-    
-    .page-link {
-      color: #0d6efd;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: 500;
-      border: 1px solid #dee2e6;
-      min-width: 40px;
-      text-align: center;
-      transition: all 0.2s ease;
-    }
-    
-    .page-link:hover {
-      background-color: #e9ecef;
-      border-color: #dee2e6;
-      color: #0a58ca;
-      z-index: 2;
-    }
-    
-    /* Search bar */
-    .search-wrapper {
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto 1.5rem;
-    }
-    
-    .search-input-group {
-      position: relative;
-      border-radius: 50px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      border: 1px solid #dee2e6;
-      transition: box-shadow 0.3s ease, border-color 0.3s ease;
-    }
-    
-    .search-input-group:focus-within {
-      box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
-      border-color: #86b7fe;
-    }
-    
-    .search-input {
-      border: none !important;
-      padding: 12px 20px;
-      font-size: 0.95rem;
-      background-color: #fff;
-    }
-    
-    .search-input:focus {
-      box-shadow: none;
-    }
-    
-    .search-button {
-      padding: 8px 20px;
-      font-weight: 500;
-      border-top-right-radius: 50px !important;
-      border-bottom-right-radius: 50px !important;
-      background-color: #f8f9fa;
-      border-left: 1px solid #dee2e6;
-      color: #495057;
-    }
-    
-    .search-button:hover {
-      background-color: #e9ecef;
-    }
-    
-    /* Price and numeric styling */
-    .price-value {
-      font-weight: 600;
-      color: #495057;
-    }
-    
-    .qty-badge {
-      display: inline-block;
-      padding: 0.35em 0.65em;
-      font-size: 0.85em;
-      font-weight: 600;
-      line-height: 1;
-      text-align: center;
-      white-space: nowrap;
-      vertical-align: baseline;
-      border-radius: 0.25rem;
-      background-color: #f8f9fa;
-      color: #495057;
-      border: 1px solid #dee2e6;
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 992px) {
-      .table-responsive {
-        overflow-x: auto;
-      }
-      
-      .action-btn {
-        min-width: 100px;
-      }
-    }
-    
-    @media (max-width: 768px) {
-      .search-wrapper {
-        max-width: 100%;
-      }
-    }
-  </style>
-</head>
 
-<div class="content-wrapper">
-  <!-- Header with title and add button -->
-  <div class="d-flex justify-content-between align-items-center py-4">
-    <h2 class="mb-0 fw-bold">Product Management</h2>
-    <a href="/admin/addProducts" class="btn btn-primary">
-      <i class="fas fa-plus me-2"></i>Add Product
-    </a>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css" />
+
+<section class="content-main">
+  <!-- Content Header -->
+  <div class="content-header">
+    <div>
+      <h2 class="content-title card-title">Product Management</h2>
+      <p class="content-subtitle">Catalog, pricing, stock levels, and promotional discounts</p>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <form action="" method="get" class="d-flex align-items-center">
+        <div class="tv-search-bar">
+          <i class="material-icons md-search text-muted"></i>
+          <input 
+            type="text" 
+            placeholder="Search products, brands or categories..."
+            name="search"
+            value="<%= searchQuery || '' %>"
+          />
+          <button type="submit">Search</button>
+        </div>
+      </form>
+      <a href="/admin/addProducts" class="btn btn-primary text-nowrap">
+        <i class="material-icons md-add_circle" style="font-size: 1.1rem;"></i> Add Product
+      </a>
+    </div>
   </div>
-  
-  <!-- Enhanced search bar -->
-  <div class="search-wrapper">
-    <form action="" method="get">
-      <div class="input-group search-input-group">
-        <input 
-          type="text" 
-          class="form-control search-input" 
-          placeholder="Search products, brands or categories..."
-          name="search"
-          value="<%= searchQuery || '' %>"
-        />
-        <button class="btn search-button" type="submit">
-          <i class="fas fa-search me-2"></i>Search
-        </button>
-      </div>
-    </form>
-  </div>
-  
-  <!-- Products table -->
-  <div class="content-wrapper">
-    <div class="card mb-4">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Product Name</th>
-                <th>Brand</th>
-                <th>Category</th>
-                <th>Regular Price</th>
-                <th>Sale Price</th>
-                <th>Offer</th>
-                <th>Stock</th>
-                <th style="width: 180px;">Manage Offers</th>
-                <th style="width: 100px;">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+
+  <!-- Products Table Card -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0" style="font-size: 1rem; font-weight: 600;">Inventory Catalog</h5>
+      <span class="badge bg-light text-dark" style="border: 1px solid var(--tv-border); font-size: 0.8rem;">
+        Total Products: <%= total.toLocaleString() %>
+      </span>
+    </div>
+
+    <div class="card-body p-0">
+      <div class="table-responsive-modern">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Brand</th>
+              <th>Category</th>
+              <th>Regular Price</th>
+              <th>Sale Price</th>
+              <th>Active Offers</th>
+              <th>Stock</th>
+              <th>Manage Offers</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (products && products.length > 0) { %>
               <% products.forEach(function(product) { %>
                 <tr data-product-id="<%= product._id %>">
-                  <td class="fw-medium"><%= product.productName %></td>
-                  <td><%= product.brand ? product.brand.brandName : 'N/A' %></td>
-                  <td><%= product.category?.name || "Uncategorized" %></td>
                   <td>
-                    <span class="price-value">₹<%= product.regularPrice.toLocaleString('en-IN') %></span>
+                    <div style="font-weight: 600; color: var(--tv-text-main); max-width: 220px;" class="text-truncate" title="<%= product.productName %>">
+                      <%= product.productName %>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="text-muted" style="font-size: 0.85rem;"><%= product.brand ? product.brand.brandName : 'N/A' %></span>
+                  </td>
+                  <td>
+                    <span class="tv-badge tv-badge-secondary">
+                      <%= product.category?.name || "Uncategorized" %>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="text-muted" style="text-decoration: line-through; font-size: 0.85rem;">
+                      ₹<%= product.regularPrice.toLocaleString('en-IN') %>
+                    </span>
                   </td>
                   <td data-price-type="sale">
-                    <span class="price-value">₹<%= product.salePrice.toLocaleString('en-IN') %></span>
+                    <span style="font-weight: 700; color: var(--tv-primary);">
+                      ₹<%= product.salePrice.toLocaleString('en-IN') %>
+                    </span>
                   </td>
                   <td id="offer-value-<%= product._id %>">
                     <% if(product.category?.categoryOffer || product.brand?.brandOffer || product.productOffer) { %>
-                      <% if(product.category?.categoryOffer) { %>
-                        <span class="badge bg-info">Category: <%= product.category.categoryOffer %>%</span>
-                      <% } %>
-                      <% if(product.brand?.brandOffer) { %>
-                        <span class="badge bg-secondary">Brand: <%= product.brand.brandOffer %>%</span>
-                      <% } %>
-                      <% if(product.productOffer) { %>
-                        <span class="badge bg-success">Product: <%= product.productOffer %>%</span>
-                      <% } %>
-                      <span class="badge bg-warning">Applied: <%= Math.max(product.category?.categoryOffer || 0, product.brand?.brandOffer || 0, product.productOffer || 0) %>%</span>
+                      <div class="d-flex flex-wrap gap-1">
+                        <% if(product.category?.categoryOffer) { %>
+                          <span class="tv-badge tv-badge-info">Cat: <%= product.category.categoryOffer %>%</span>
+                        <% } %>
+                        <% if(product.brand?.brandOffer) { %>
+                          <span class="tv-badge tv-badge-secondary">Brand: <%= product.brand.brandOffer %>%</span>
+                        <% } %>
+                        <% if(product.productOffer) { %>
+                          <span class="tv-badge tv-badge-success">Prod: <%= product.productOffer %>%</span>
+                        <% } %>
+                        <span class="tv-badge tv-badge-warning">
+                          Max: <%= Math.max(product.category?.categoryOffer || 0, product.brand?.brandOffer || 0, product.productOffer || 0) %>%
+                        </span>
+                      </div>
                     <% } else { %>
-                      <span class="text-muted">No Offers</span>
+                      <span class="text-muted small">No Offers</span>
                     <% } %>
                   </td>
                   <td>
-                    <span class="qty-badge <%= product.quantity < 10 ? 'bg-danger text-white' : '' %>">
-                      <%= product.quantity || 0 %>
-                    </span>
+                    <% if (product.quantity <= 0) { %>
+                      <span class="tv-badge tv-badge-danger">Out of Stock</span>
+                    <% } else if (product.quantity < 10) { %>
+                      <span class="tv-badge tv-badge-warning"><%= product.quantity %> Left</span>
+                    <% } else { %>
+                      <span class="tv-badge tv-badge-success"><%= product.quantity %> In Stock</span>
+                    <% } %>
                   </td>
                   <td>
                     <div class="btn-group-action">
                       <% if(product.productOffer) { %>
-                        <button class="btn btn-danger btn-sm action-btn" 
+                        <button class="btn btn-sm btn-outline-danger action-btn" 
                                 data-id="<%= product._id %>"
                                 onclick="removeProductOffer('<%= product._id %>')">
-                          <i class="fas fa-tag me-1"></i>Remove Offer
+                          <i class="material-icons md-close" style="font-size: 0.9rem;"></i> Remove
                         </button>
                       <% } else { %>
-                        <button class="btn btn-success btn-sm action-btn" 
+                        <button class="btn btn-sm btn-outline-primary action-btn" 
                                 data-id="<%= product._id %>"
                                 onclick="addProductOffer('<%= product._id %>')">
-                          <i class="fas fa-percentage me-1"></i>Add Offer
+                          <i class="material-icons md-local_offer" style="font-size: 0.9rem;"></i> Add Offer
                         </button>
                       <% } %>
                     </div>
                   </td>
-                  <td>
-                    <a href="/admin/editProduct/<%= product._id %>" class="btn btn-primary btn-sm action-btn">
-                      <i class="fas fa-edit me-1"></i>Edit
-                    </a>
+                  <td class="text-end">
+                    <div class="d-inline-flex gap-2">
+                      <a href="/admin/editProduct/<%= product._id %>" class="btn btn-sm btn-primary">
+                        <i class="material-icons md-edit" style="font-size: 0.9rem;"></i> Edit
+                      </a>
+                    </div>
                   </td>
                 </tr>
               <% }); %>
-            </tbody>
-          </table>
-        </div>
+            <% } else { %>
+              <tr>
+                <td colspan="9" class="text-center py-5">
+                  <div class="text-muted">
+                    <i class="material-icons md-shopping_bag" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                    <p class="mt-2 mb-0">No products found matching your search</p>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
       </div>
     </div>
-  </div>
-  
-  <!-- Enhanced pagination -->
-  <nav aria-label="Product pagination">
-    <ul class="pagination">
-      <!-- Previous button -->
-      <% if (currentPage > 0) { %>
-        <li class="page-item">
-          <a class="page-link" href="?page=<%= currentPage - 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-      <% } else { %>
-        <li class="page-item disabled">
-          <span class="page-link">&laquo;</span>
-        </li>
-      <% } %>
-  
-      <!-- Page numbers -->
-      <% for(let i = 0; i < totalPages; i++) { %>
-        <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
-          <a class="page-link" href="?page=<%= i %><%= searchQuery ? '&search=' + searchQuery : '' %>">
-            <%= i + 1 %>
-          </a>
-        </li>
-      <% } %>
-  
-      <!-- Next button -->
-      <% if (currentPage < totalPages - 1) { %>
-        <li class="page-item">
-          <a class="page-link" href="?page=<%= currentPage + 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      <% } else { %>
-        <li class="page-item disabled">
-          <span class="page-link">&raquo;</span>
-        </li>
-      <% } %>
-    </ul>
-  </nav>
-  
-  <!-- Page info -->
-  <div class="text-center mt-2 mb-5">
-    <p class="text-muted">
-      Showing <%= (currentPage * perPage) + 1 %> to <%= Math.min((currentPage + 1) * perPage, total) %> of <%= total.toLocaleString() %> products
-    </p>
-  </div>
-</div>
 
-<!-- Updated scripts for offer management -->
+    <!-- Enhanced pagination -->
+    <% if (totalPages > 1) { %>
+      <div class="card-footer bg-white border-top py-3">
+        <nav aria-label="Product pagination">
+          <ul class="pagination mb-0">
+            <% if (currentPage > 0) { %>
+              <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage - 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>">&laquo;</a>
+              </li>
+            <% } else { %>
+              <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+              </li>
+            <% } %>
+
+            <% for(let i = 0; i < totalPages; i++) { %>
+              <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %><%= searchQuery ? '&search=' + searchQuery : '' %>">
+                  <%= i + 1 %>
+                </a>
+              </li>
+            <% } %>
+
+            <% if (currentPage < totalPages - 1) { %>
+              <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage + 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>">&raquo;</a>
+              </li>
+            <% } else { %>
+              <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+              </li>
+            <% } %>
+          </ul>
+        </nav>
+        <div class="text-center mt-2">
+          <small class="text-muted">
+            Showing <%= (currentPage * perPage) + 1 %> to <%= Math.min((currentPage + 1) * perPage, total) %> of <%= total.toLocaleString() %> products
+          </small>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<!-- Offer & Product Management Scripts -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // Helper function to update the button state after a successful operation
     function updateButtonState(button, isBlocked) {
       if (isBlocked) {
-        // Change the button to "Unblock" if product is now blocked
-        button.innerHTML = '<i class="fas fa-unlock me-1"></i>Unblock';
+        button.innerHTML = '<i class="material-icons md-lock_open" style="font-size: 0.9rem;"></i> Unblock';
         button.classList.remove("btn-danger", "block-button");
         button.classList.add("btn-success", "unblock-button");
-        // Remove previous listeners and add new one for unblocking
         button.replaceWith(button.cloneNode(true));
         button = document.querySelector(`[data-id="${button.dataset.id}"]`);
         button.addEventListener("click", () => {
           sendRequest("/admin/unblockProduct", button.dataset.id, button);
         });
       } else {
-        // Change the button to "Block" if product is now unblocked
-        button.innerHTML = '<i class="fas fa-ban me-1"></i>Block';
+        button.innerHTML = '<i class="material-icons md-block" style="font-size: 0.9rem;"></i> Block';
         button.classList.remove("btn-success", "unblock-button");
         button.classList.add("btn-danger", "block-button");
-        // Remove previous listeners and add new one for blocking
         button.replaceWith(button.cloneNode(true));
         button = document.querySelector(`[data-id="${button.dataset.id}"]`);
         button.addEventListener("click", () => {
@@ -479,23 +219,18 @@
       }
     }
     
-    // Function to send a fetch request and update the UI on success
     function sendRequest(url, productId, button) {
       fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: productId })
       })
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          // Set a message based on the new status
           let message = data.product.isBlocked
             ? "Product blocked successfully!"
             : "Product unblocked successfully!";
-          // Show a SweetAlert popup with the success message
           Swal.fire({
             icon: 'success',
             title: 'Success',
@@ -505,7 +240,6 @@
           });
           updateButtonState(button, data.product.isBlocked);
         } else {
-          // Show an error SweetAlert if the operation failed
           Swal.fire({
             icon: 'error',
             title: 'Error',
@@ -514,16 +248,11 @@
         }
       })
       .catch(error => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.message
-        });
+        Swal.fire({ icon: 'error', title: 'Error', text: error.message });
         console.error("Error:", error);
       });
     }
     
-    // Attach click event listeners for the initial buttons
     document.querySelectorAll(".block-button").forEach(button => {
       button.addEventListener("click", () => {
         sendRequest("/admin/blockProduct", button.dataset.id, button);
@@ -537,53 +266,33 @@
     });
   });
 
-  // Enhanced offer management with better UI feedback
   async function handleProductOffer(action, productId) {
     try {
-      // If adding offer, show enhanced input dialog
       let percentage;
       if (action === 'add') {
         const result = await Swal.fire({
           title: 'Add Product Offer',
-          input: 'range',
-          inputAttributes: {
-            min: 1,
-            max: 99,
-            step: 1
-          },
+          input: 'number',
+          inputAttributes: { min: 1, max: 99, step: 1 },
           inputValue: 15,
           confirmButtonText: 'Apply Offer',
           showCancelButton: true,
           inputLabel: 'Discount Percentage (%)',
-          footer: '<small>Set discount percentage between 1% and 99%</small>',
-          didOpen: () => {
-            const input = Swal.getInput();
-            const value = Swal.getInput().value;
-            Swal.getHtmlContainer().querySelector('strong').textContent = value;
-            
-            input.addEventListener('input', () => {
-              Swal.getHtmlContainer().querySelector('strong').textContent = input.value;
-            });
-          },
-          html: '<div class="text-center mt-2">Selected discount: <strong></strong>%</div>',
-          preConfirm: (value) => {
-            return parseInt(value);
-          }
+          footer: '<small>Set discount percentage between 1% and 99%</small>'
         });
 
         if (!result.isConfirmed) return;
-        percentage = result.value;
+        percentage = parseInt(result.value);
       }
 
-      // Confirm before removing
       if (action === 'remove') {
         const result = await Swal.fire({
           title: 'Remove Product Offer',
           text: 'Are you sure you want to remove this special offer?',
           icon: 'warning',
           showCancelButton: true,
-          confirmButtonColor: '#d33',
-          cancelButtonColor: '#3085d6',
+          confirmButtonColor: '#ef4444',
+          cancelButtonColor: '#64748b',
           confirmButtonText: 'Yes, remove it',
           cancelButtonText: 'Cancel'
         });
@@ -591,17 +300,13 @@
         if (!result.isConfirmed) return;
       }
 
-      // Show loading state
       Swal.fire({
         title: `${action === 'add' ? 'Adding' : 'Removing'} Offer...`,
         text: 'Please wait',
         allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        }
+        didOpen: () => { Swal.showLoading(); }
       });
 
-      // Make API call
       const url = `/admin/${action}ProductOffer`;
       const response = await fetch(url, {
         method: 'POST',
@@ -615,7 +320,6 @@
       const data = await response.json();
       
       if (data.success) {
-        // Update UI elements including price
         updateProductDisplay(productId, data);
         await Swal.fire({
           icon: 'success',
@@ -637,83 +341,44 @@
     }
   }
 
-  // Enhanced product display update
   function updateProductDisplay(productId, data) {
-    // Update offer display
     const offerValueElement = document.getElementById(`offer-value-${productId}`);
     const buttonContainer = document.querySelector(`button[data-id="${productId}"]`).parentElement;
     const salePriceElement = document.querySelector(`tr[data-product-id="${productId}"] td[data-price-type="sale"]`);
     
-    // Update offer badges
     let offerHtml = '';
     if (data.categoryOffer || data.brandOffer || data.productOffer) {
       if (data.categoryOffer) {
-        offerHtml += `<span class="badge bg-info">Category: ${data.categoryOffer}%</span> `;
+        offerHtml += `<span class="tv-badge tv-badge-info">Cat: ${data.categoryOffer}%</span> `;
       }
       if (data.brandOffer) {
-        offerHtml += `<span class="badge bg-secondary">Brand: ${data.brandOffer}%</span> `;
+        offerHtml += `<span class="tv-badge tv-badge-secondary">Brand: ${data.brandOffer}%</span> `;
       }
       if (data.productOffer) {
-        offerHtml += `<span class="badge bg-success">Product: ${data.productOffer}%</span> `;
+        offerHtml += `<span class="tv-badge tv-badge-success">Prod: ${data.productOffer}%</span> `;
       }
-      
-      // Calculate max offer
-      const maxOffer = Math.max(
-        data.categoryOffer || 0, 
-        data.brandOffer || 0, 
-        data.productOffer || 0
-      );
-      
-      offerHtml += `<span class="badge bg-warning">Applied: ${maxOffer}%</span>`;
+      const maxOffer = Math.max(data.categoryOffer || 0, data.brandOffer || 0, data.productOffer || 0);
+      offerHtml += `<span class="tv-badge tv-badge-warning">Max: ${maxOffer}%</span>`;
     } else {
-      offerHtml = '<span class="text-muted">No Offers</span>';
+      offerHtml = '<span class="text-muted small">No Offers</span>';
     }
     
-    // Update offer control button
     const buttonHtml = data.productOffer ? 
-      `<button class="btn btn-danger btn-sm action-btn" data-id="${productId}" onclick="removeProductOffer('${productId}')">
-         <i class="fas fa-tag me-1"></i>Remove Offer
+      `<button class="btn btn-sm btn-outline-danger action-btn" data-id="${productId}" onclick="removeProductOffer('${productId}')">
+         <i class="material-icons md-close" style="font-size: 0.9rem;"></i> Remove
        </button>` :
-      `<button class="btn btn-success btn-sm action-btn" data-id="${productId}" onclick="addProductOffer('${productId}')">
-         <i class="fas fa-percentage me-1"></i>Add Offer
+      `<button class="btn btn-sm btn-outline-primary action-btn" data-id="${productId}" onclick="addProductOffer('${productId}')">
+         <i class="material-icons md-local_offer" style="font-size: 0.9rem;"></i> Add Offer
        </button>`;
     
-    // Update the UI elements
     offerValueElement.innerHTML = offerHtml;
     buttonContainer.innerHTML = buttonHtml;
     
-    // Update the sale price if provided in the response with animation
     if (data.newPrice !== undefined && salePriceElement) {
-      // Add a temporary highlight class
-      salePriceElement.classList.add('bg-light');
-      
-      // Update the content
-      salePriceElement.innerHTML = `<span class="price-value">₹${parseFloat(data.newPrice).toLocaleString('en-IN')}</span>`;
-      
-      // Remove the highlight after animation
-      setTimeout(() => {
-        salePriceElement.classList.remove('bg-light');
-      }, 1500);
+      salePriceElement.innerHTML = `<span style="font-weight: 700; color: var(--tv-primary);">₹${parseFloat(data.newPrice).toLocaleString('en-IN')}</span>`;
     }
   }
 
-  // Category offer alert function
-  function showCategoryOfferAlert(categoryOfferValue) {
-    Swal.fire({
-      icon: 'info',
-      title: 'Category Offer Active',
-      html: `
-        <div class="text-center">
-          <p>This product has a category offer of <b>${categoryOfferValue}%</b>.</p>
-          <p>The higher discount between category and product offers will be applied.</p>
-        </div>
-      `,
-      confirmButtonText: 'Understood',
-      confirmButtonColor: '#3085d6'
-    });
-  }
-
-  // Wrapper functions for backwards compatibility
   function addProductOffer(productId) {
     handleProductOffer('add', productId);
   }
@@ -725,5 +390,4 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 <%- include("../../views/partials/admin/footer") %>

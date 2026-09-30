@@ -44,94 +44,77 @@
         }
     </style>
 
-    <div class="container py-4">
-        <!-- Global Time Period Filter -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card shadow-sm">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2>Dashboard </h2>
-                            <p>Whole data about your business here</p>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <select id="globalFilter" class="form-select me-2" onchange="updateAllCharts()">
-                                <option value="daily">Daily</option>
-                                <option value="weekly" selected>Weekly</option>
-                                <option value="monthly">Monthly</option>
-                                <option value="yearly">Yearly</option>
-                                <option value="custom">Custom</option>
-                            </select>
-                            <div id="customDates" style="display: none;" class="d-flex">
-                                <input type="date" id="fromDate" class="form-control me-2" />
-                                <input type="date" id="toDate" class="form-control me-2" />
-                                <button type="button" class="btn btn-primary" onclick="updateAllCharts()">Apply</button>
-                            </div>
-                        </div>
-                    </div>
+    <section class="content-main">
+        <!-- Content Header & Global Time Period Filter -->
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Business Overview</h2>
+                <p class="content-subtitle">Real-time performance metrics and sales intelligence</p>
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <select id="globalFilter" class="form-select" style="min-width: 140px;" onchange="updateAllCharts()">
+                    <option value="daily">Daily</option>
+                    <option value="weekly" selected>Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+                <div id="customDates" style="display: none;" class="d-flex gap-2">
+                    <input type="date" id="fromDate" class="form-control" />
+                    <input type="date" id="toDate" class="form-control" />
+                    <button type="button" class="btn btn-primary" onclick="updateAllCharts()">Apply</button>
                 </div>
             </div>
         </div>
 
         <!-- Stats Cards -->
-        <div class="row mb-4">
-            <div class="col-lg-3">
-                <div class="card card-body mb-4">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-primary-light"><i
-                                class="text-primary material-icons md-monetization_on"></i></span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Revenue (Delivered Orders)</h6>
-                            <span id="revenueValue">₹ <%= stats.total.sales.toFixed(2) %></span>
-                            <span class="text-sm">
-                                From delivered orders only
-                            </span>
-                        </div>
-                    </article>
+        <div class="row g-3 mb-4">
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="tv-stat-card">
+                    <div>
+                        <div class="text-muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Total Revenue</div>
+                        <h4 class="mb-0 mt-1" id="revenueValue" style="font-weight: 800; color: var(--tv-text-main);">₹ <%= stats.total.sales.toFixed(2) %></h4>
+                        <small class="text-muted" style="font-size: 0.75rem;">From delivered orders</small>
+                    </div>
+                    <div class="tv-stat-icon" style="background: rgba(99, 102, 241, 0.12); color: #4f46e5;">
+                        <i class="material-icons md-monetization_on"></i>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-3">
-                <div class="card card-body mb-4">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-success-light"><i
-                                class="text-success material-icons md-local_shipping"></i></span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Delivered Orders</h6>
-                            <span id="ordersValue"><%= stats.total.orders %> orders</span>
-                            <span class="text-sm">
-                                Successfully delivered
-                            </span>
-                        </div>
-                    </article>
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="tv-stat-card">
+                    <div>
+                        <div class="text-muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Delivered Orders</div>
+                        <h4 class="mb-0 mt-1" id="ordersValue" style="font-weight: 800; color: var(--tv-text-main);"><%= stats.total.orders %></h4>
+                        <small class="text-muted" style="font-size: 0.75rem;">Successfully completed</small>
+                    </div>
+                    <div class="tv-stat-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
+                        <i class="material-icons md-local_shipping"></i>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-3">
-                <div class="card card-body mb-4">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-info-light"><i
-                                class="text-info material-icons md-shopping_basket"></i></span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Users</h6>
-                            <span id="usersValue">0 users</span>
-                            <span class="text-sm">
-                                Active accounts
-                            </span>
-                        </div>
-                    </article>
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="tv-stat-card">
+                    <div>
+                        <div class="text-muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Customers</div>
+                        <h4 class="mb-0 mt-1" id="usersValue" style="font-weight: 800; color: var(--tv-text-main);">0</h4>
+                        <small class="text-muted" style="font-size: 0.75rem;">Active user accounts</small>
+                    </div>
+                    <div class="tv-stat-icon" style="background: rgba(6, 182, 212, 0.12); color: #06b6d4;">
+                        <i class="material-icons md-people"></i>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-3">
-                <div class="card card-body mb-4">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-warning-light">
-                            <i class="text-warning material-icons md-qr_code"></i>
-                        </span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Products</h6>
-                            <span id="productsValue">0 products</span>
-                            <span id="categoriesCount" class="text-sm">In 0 Categories</span>
-                        </div>
-                    </article>
+            <div class="col-xl-3 col-sm-6 col-12">
+                <div class="tv-stat-card">
+                    <div>
+                        <div class="text-muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Inventory</div>
+                        <h4 class="mb-0 mt-1" id="productsValue" style="font-weight: 800; color: var(--tv-text-main);">0</h4>
+                        <small class="text-muted" id="categoriesCount" style="font-size: 0.75rem;">In 0 Categories</small>
+                    </div>
+                    <div class="tv-stat-icon" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;">
+                        <i class="material-icons md-watch"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -243,10 +226,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
-
-    <%- include("../partials/admin/footer") %>
+    </section>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -670,3 +651,4 @@
         }
     
     </script>
+<%- include('../partials/admin/footer') %>

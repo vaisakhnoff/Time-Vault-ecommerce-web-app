@@ -1,67 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page Not Found</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Add your CSS file -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        h1 {
-            font-size: 80px;
-            color: #333;
-        }
-        p {
-            font-size: 20px;
-            color: #666;
-        }
-        .btn {
-            background-color: #333;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-        .btn:hover {
-            background-color: #555;
-        }
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-            background: white;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .navbar a {
-            text-decoration: none;
-            color: black;
-            margin: 0 15px;
-            font-size: 18px;
-        }
-        .navbar a:hover {
-            color: red;
-        }
-    </style>
-</head>
-<body>
- 
-    <div class="container">
-        <h1>404</h1>
-        <p>Oops! The page you're looking for doesn't exist.</p>
-        <a href="/" class="btn">Return to Home</a>
+<%- include("../../views/partials/user/header") %>
+
+<main class="vault-page-wrapper d-flex align-items-center justify-content-center text-center">
+    <div class="container py-5">
+        <div class="vault-card" style="max-width: 540px; margin: 0 auto; padding: 50px 30px;">
+            <div style="font-size: 80px; font-weight: 800; line-height: 1; margin-bottom: 12px; font-family: var(--vault-font-heading);" class="vault-gold-text">404</div>
+            <h3 style="font-weight: 800; color: #0f172a; margin-bottom: 12px;">Piece Not Located</h3>
+            <p style="color: #64748b; font-size: 15px; margin-bottom: 28px;">The vault archive entry or page you are attempting to inspect does not exist or has been relocated.</p>
+            <div class="d-flex justify-content-center" style="gap: 12px;">
+                <a href="/" class="vault-btn-primary">
+                    <i class="ti-arrow-left"></i>
+                    <span>Return to Vault</span>
+                </a>
+                <a href="/shopPage" class="vault-btn-glass">
+                    <span>Collections</span>
+                </a>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</main>
+
+<%- include("../../views/partials/user/footer") %>

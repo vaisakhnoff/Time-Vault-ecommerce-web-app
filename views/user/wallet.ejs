@@ -1,272 +1,174 @@
-<!-- Start Banner Area -->
-<section class="banner-area organic-breadcrumb">
-    <div class="container">
-      <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
-        <div class="col-first">
-          <h1>Wallet</h1>
-          <nav class="d-flex align-items-center">
-            <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
-            <a href="/wallet">Wallet</a>
-          </nav>
+<%- include("../../views/partials/user/header") %>
+
+<!-- Add Razorpay SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<main class="vault-page-wrapper">
+  <div class="container">
+    <!-- Breadcrumb Pill -->
+    <div class="vault-breadcrumb-pill">
+      <a href="/">Home</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <a href="/userProfile">Account</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <span class="active-crumb">Vault Wallet</span>
+    </div>
+
+    <!-- Page Header -->
+    <div class="mb-4">
+      <h1 class="vault-page-title">Vault <span class="vault-gold-text">Wallet</span></h1>
+      <p class="vault-page-subtitle">Manage store credits, allocation balances, and view transaction history.</p>
+    </div>
+
+    <!-- Balance Overview Cards -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3 mb-md-0">
+        <div class="vault-card h-100" style="background: linear-gradient(135deg, #ffffff 0%, #fffbf5 100%); border-left: 4px solid #ff7700;">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span style="color: var(--vault-text-secondary); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Available Balance</span>
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(255, 119, 0, 0.1); display: flex; align-items: center; justify-content: center; color: #ff7700;">
+              <i class="ti-wallet" style="font-size: 16px;"></i>
+            </div>
+          </div>
+          <h2 style="font-size: 32px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">₹<%= wallet.balance.toFixed(2) %></h2>
+          <small class="text-muted">Instant credit applicable on all timepieces & accessories</small>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="vault-card h-100" style="background: linear-gradient(135deg, #ffffff 0%, #fdfbf7 100%); border-left: 4px solid #d4af37;">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span style="color: var(--vault-text-secondary); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Referral Earnings</span>
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(212, 175, 55, 0.1); display: flex; align-items: center; justify-content: center; color: #d4af37;">
+              <i class="ti-gift" style="font-size: 16px;"></i>
+            </div>
+          </div>
+          <h2 style="font-size: 32px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">₹<%= wallet.referralEarnings.toFixed(2) %></h2>
+          <small class="text-muted">Accumulated bonuses earned through invitation rewards</small>
         </div>
       </div>
     </div>
-  </section>
-  <!-- End Banner Area -->
-  
-  <!-- Include Header -->
-  <%- include("../../views/partials/user/header") %>
-  
-  <!-- Custom CSS for Wallet Page -->
-  <style>
-    /* Wallet Balance Section */
-    .wallet-balance {
-      background-color: #fff;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      padding: 30px;
-      border-radius: 8px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .wallet-balance h3 {
-      color: #666;
-      margin-bottom: 15px;
-    }
-    .wallet-balance h2 {
-      color: #333;
-      font-size: 2.5em;
-      margin: 0;
-    }
-    
-    /* Transaction History Table */
-    .transaction-history h3 {
-      margin-bottom: 20px;
-      color: #333;
-    }
-    .transaction-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .transaction-table th, .transaction-table td {
-      padding: 12px 15px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
-    .transaction-table th {
-      background-color: #f2f2f2;
-    }
-    
-    /* Pagination */
-    .pagination {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .pagination a, .pagination span {
-      margin: 0 5px;
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      text-decoration: none;
-      color: #333;
-    }
-    .pagination .current-page {
-      background-color: #333;
-      color: #fff;
-      border-color: #333;
-    }
-    
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .transaction-table {
-        display: block;
-        width: 100%;
-      }
-      .transaction-table thead {
-        display: none;
-      }
-      .transaction-table tbody tr {
-        display: block;
-        margin-bottom: 20px;
-        border-bottom: 1px solid #ddd;
-      }
-      .transaction-table td {
-        display: block;
-        text-align: right;
-        position: relative;
-        padding-left: 50%;
-      }
-      .transaction-table td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        width: 45%;
-        padding-right: 10px;
-        font-weight: bold;
-        text-align: left;
-      }
-    }
-    .credit {
-      background-color: rgba(40, 167, 69, 0.1);
-    }
-    .debit {
-      background-color: rgba(220, 53, 69, 0.1);
-    }
-    .badge {
-      padding: 8px 12px;
-      border-radius: 4px;
-    }
 
-    .pagination {
-  display: flex;
-  justify-content: center; /* Ensures proper centering */
-  align-items: center;
-  margin-top: 20px;
-  gap: 5px; /* Adds spacing between buttons */
-}
-
-.pagination a, 
-.pagination span {
-  display: inline-block;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  text-decoration: none;
-  color: #333;
-  border-radius: 4px; /* Rounded edges for better UI */
-  min-width: 35px;
-  text-align: center;
-}
-
-.pagination .current-page {
-  background-color: #333;
-  color: #fff;
-  border-color: #333;
-}
-
-  </style>
-  
-  <section class="add-money_section section_gap">
-    <div class="container">
-      <h2>Add Money to Wallet</h2>
-      <div class="row">
-        <div class="col-md-4">
-          <input type="number" id="wallet-amount" class="form-control form-control-sm" placeholder="Enter amount" min="1" required>
+    <!-- Quick Add Credits Card -->
+    <div class="vault-card mb-4" style="background: #fafcff; border: 1px dashed #cbd5e1;">
+      <div class="row align-items-center">
+        <div class="col-lg-7 mb-3 mb-lg-0">
+          <h5 style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">Top Up Vault Balance</h5>
+          <p style="color: var(--vault-text-secondary); font-size: 14px; margin-bottom: 0;">Add funds via UPI, Netbanking, or Debit/Credit card securely with Razorpay.</p>
         </div>
-        <div class="col-md-4">
-          <button id="add-money-btn" class="btn btn-primary btn-sm">Add Money</button>
+        <div class="col-lg-5">
+          <div class="d-flex align-items-center" style="gap: 10px;">
+            <input type="number" id="wallet-amount" class="form-control" placeholder="Enter ₹ amount (e.g. 5000)" min="1" style="height: 48px; border-radius: 9999px; border: 1px solid #e2e8f0; padding-left: 20px;">
+            <button id="add-money-btn" class="vault-btn-primary" style="padding: 12px 24px; white-space: nowrap; font-size: 14px; cursor: pointer;">
+              <span>Add Credits</span>
+              <i class="ti-arrow-right"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </section>
 
-
-  <!-- Wallet Area -->
-  <section class="wallet_area">
-    <div class="container">
-      <!-- Wallet Balance -->
-      <div class="row">
-        <div class="col-md-6">
-          <div class="wallet-balance">
-            <h3>Main Balance</h3>
-            <h2>₹<%= wallet.balance.toFixed(2) %></h2>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="wallet-balance">
-            <h3>Referral Earnings</h3>
-            <h2>₹<%= wallet.referralEarnings.toFixed(2) %></h2>
-          </div>
-        </div>
+    <!-- Transaction History Card -->
+    <div class="vault-card">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 style="font-weight: 700; color: #0f172a; margin: 0;">Ledger & Transactions</h5>
+        <span style="font-size: 13px; color: #64748b;">Live Recorded Entries</span>
       </div>
-  
-      
-      <!-- Transaction History -->
-      <div class="transaction-history mt-4">
-        <h3>Transaction History</h3>
-        <div class="table-responsive">
-          <table class="table transaction-table">
-            <thead>
-              <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Description</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Type</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% if (transactions && transactions.length > 0) { %>
-                <% transactions.forEach(function(tx) { %>
-                  <tr class="<%= tx.type.toLowerCase() %>">
-                    <td data-label="Date"><%= new Date(tx.createdAt).toLocaleDateString() %></td>
-                    <td data-label="Description"><%= tx.description %></td>
-                    <td data-label="Amount">₹<%= tx.amount.toFixed(2) %></td>
-                    <td data-label="Type">
-                      <span class="badge <%= tx.type === 'Credit' ? 'bg-success' : 'bg-danger' %>">
-                        <%= tx.type %>
-                      </span>
-                    </td>
-                  </tr>
-                <% }); %>
-              <% } else { %>
-                <tr>
-                  <td colspan="4" class="text-center">No transactions found.</td>
+
+      <div class="table-responsive">
+        <table class="table" style="vertical-align: middle;">
+          <thead>
+            <tr style="border-top: none; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+              <th style="border-top: none; font-weight: 600;">Date</th>
+              <th style="border-top: none; font-weight: 600;">Description</th>
+              <th style="border-top: none; font-weight: 600;">Amount</th>
+              <th style="border-top: none; font-weight: 600; text-align: right;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (transactions && transactions.length > 0) { %>
+              <% transactions.forEach(function(tx) { %>
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                  <td style="color: #475569; font-size: 14px;"><%= new Date(tx.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></td>
+                  <td style="color: #0f172a; font-weight: 500; font-size: 14px;"><%= tx.description %></td>
+                  <td style="font-weight: 700; font-size: 15px; color: <%= tx.type === 'Credit' ? '#16a34a' : '#dc2626' %>;">
+                    <%= tx.type === 'Credit' ? '+' : '-' %>₹<%= tx.amount.toFixed(2) %>
+                  </td>
+                  <td style="text-align: right;">
+                    <span style="display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600; background: <%= tx.type === 'Credit' ? '#f0fdf4' : '#fef2f2' %>; color: <%= tx.type === 'Credit' ? '#16a34a' : '#dc2626' %>; border: 1px solid <%= tx.type === 'Credit' ? '#bbf7d0' : '#fecaca' %>;">
+                      <%= tx.type %>
+                    </span>
+                  </td>
                 </tr>
-              <% } %>
-            </tbody>
-          </table>
-        </div>
-  
-        <!-- Pagination -->
-        <% if (pagination.totalPages > 1) { %>
-          <div class="pagination">
-            <% for(let i = 1; i <= pagination.totalPages; i++) { %>
-              <% if (i === pagination.currentPage) { %>
-                <span class="current-page"><%= i %></span>
-              <% } else { %>
-                <a href="/wallet?page=<%= i %>"><%= i %></a>
-              <% } %>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="4" class="text-center py-5 text-muted">
+                  <i class="ti-receipt mb-2" style="font-size: 32px; display: block; color: #cbd5e1;"></i>
+                  No ledger transactions recorded yet.
+                </td>
+              </tr>
             <% } %>
-          </div>
-        <% } %>
+          </tbody>
+        </table>
       </div>
-    </div>
-  </section>
 
-  
-  <script>
-    document.getElementById('add-money-btn').addEventListener('click', async function() {
+      <!-- Pagination -->
+      <% if (pagination.totalPages > 1) { %>
+        <div class="d-flex justify-content-center align-items-center mt-4" style="gap: 6px;">
+          <% for(let i = 1; i <= pagination.totalPages; i++) { %>
+            <% if (i === pagination.currentPage) { %>
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: var(--vault-gold-gradient); color: #fff; font-weight: 700; font-size: 14px; box-shadow: var(--vault-gold-glow);"><%= i %></span>
+            <% } else { %>
+              <a href="/wallet?page=<%= i %>" style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; text-decoration: none; font-size: 14px; transition: all 0.2s;"><%= i %></a>
+            <% } %>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<script>
+  document.getElementById('add-money-btn').addEventListener('click', async function() {
     const amountInput = document.getElementById('wallet-amount');
     const amount = parseFloat(amountInput.value);
     
-    // HTML5 validation should handle the empty value, but we verify here as well.
     if (!amount || amount <= 0 || isNaN(amount)) {
-      Swal.fire('Error', 'Please enter a valid amount greater than zero', 'error');
-      amountInput.focus();
+      Swal.fire({
+        icon: 'warning',
+        title: 'Invalid Amount',
+        text: 'Please enter a valid credit amount above 0.',
+        confirmButtonColor: '#ff7700'
+      });
       return;
     }
     
     try {
-      // Create a Razorpay order for wallet top-up
       const response = await fetch('/wallet/createOrder', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount }) // amount in rupees
+        body: JSON.stringify({ amount })
       });
       const data = await response.json();
       
       if (!data.success) {
-        Swal.fire('Error', data.message, 'error');
+        Swal.fire({
+          icon: 'error',
+          title: 'Allocation Error',
+          text: data.message || 'Failed to initiate order',
+          confirmButtonColor: '#ff7700'
+        });
         return;
       }
       
-      // Initialize Razorpay checkout options
       var options = {
-        "key": "<%= process.env.RAZORPAY_KEY_ID %>", // Razorpay key from environment
-        "amount": data.order.amount, // amount in paise
-        "currency": "INR",
-        "name": "Your Store",
-        "description": "Add money to wallet",
-        "order_id": data.order.id,
-        "handler": async function(response) {
-          // On successful payment, verify payment on the backend
+        key: data.key_id,
+        amount: data.amount,
+        currency: "INR",
+        name: "TIME VAULT",
+        description: "Vault Balance Top Up",
+        order_id: data.order_id,
+        handler: async function (response){
           const verifyRes = await fetch('/wallet/paymentSuccess', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -274,34 +176,47 @@
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              amount: amount // in rupees
+              amount: amount
             })
           });
           const verifyData = await verifyRes.json();
           if (verifyData.success) {
-            Swal.fire('Success', 'Money added to wallet successfully', 'success')
-              .then(() => location.reload());
+            Swal.fire({
+              icon: 'success',
+              title: 'Credits Added',
+              text: 'Your Vault wallet balance has been updated.',
+              timer: 2000,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.reload();
+            });
           } else {
-            Swal.fire('Error', verifyData.message, 'error');
+            Swal.fire({
+              icon: 'error',
+              title: 'Verification Failed',
+              text: verifyData.message || 'Payment verification failed',
+              confirmButtonColor: '#ff7700'
+            });
           }
         },
-        "theme": { "color": "#3399cc" }
+        theme: {
+          color: "#ff7700"
+        }
       };
       
       var rzp1 = new Razorpay(options);
       rzp1.open();
     } catch (error) {
       console.error(error);
-      Swal.fire('Error', 'Something went wrong', 'error');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong while processing the transaction.',
+        confirmButtonColor: '#ff7700'
+      });
     }
   });
-  </script>
-  
-  <!-- Add this in the head section -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</script>
 
-<!-- Add Razorpay SDK -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
-  <!-- Include Footer -->
-  <%- include("../../views/partials/user/footer") %>
+<!-- Include Footer -->
+<%- include("../../views/partials/user/footer") %>

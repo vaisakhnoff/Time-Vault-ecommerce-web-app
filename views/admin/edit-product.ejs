@@ -48,7 +48,7 @@
     }
   </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
- 
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 </head>
 <section class="content-main">
   <div class="row">
@@ -156,7 +156,7 @@
                                type="file" 
                                name="images" 
                                id="input<%= i %>" 
-                               accept="image/png, image/jpeg, image/jpg"
+                               accept="image/*, .jpg, .jpeg, .png, .webp, .heic, .heif, .avif, .gif, .bmp"
                                onchange="handleImageChange(event, <%= i %>)">
                       </div>
                       
@@ -255,22 +255,48 @@ function clearErrorMessages() {
 }
 
 // --------------------- Image Cropping Functions ---------------------
-function handleImageChange(event, index) {
+async function handleImageChange(event, index) {
     const input = event.target;
     const currentImageContainer = document.getElementById(`currentImage${index}`);
     const cropContainer = document.getElementById(`cropContainer${index}`);
     let cropper = null;
     
     if (input.files && input.files[0]) {
-        // Validate file size (max 5MB)
-        if (input.files[0].size > 5 * 1024 * 1024) {
+        let file = input.files[0];
+        // Validate file size (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
             Swal.fire({
                 icon: 'error',
                 title: 'File too large',
-                text: 'Please select an image under 5MB'
+                text: 'Please select an image under 10MB'
             });
             input.value = '';
             return;
+        }
+
+        const lowerName = file.name.toLowerCase();
+        const isHeic = lowerName.endsWith('.heic') || lowerName.endsWith('.heif') || file.type === 'image/heic' || file.type === 'image/heif';
+
+        if (isHeic && typeof heic2any !== 'undefined') {
+            Swal.fire({
+                title: 'Converting HEIC Photo...',
+                text: 'Please wait...',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => { Swal.showLoading(); }
+            });
+            try {
+                const convertedBlob = await heic2any({
+                    blob: file,
+                    toType: 'image/jpeg',
+                    quality: 0.92
+                });
+                const blobResult = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+                file = new File([blobResult], file.name.replace(/\.(heic|heif)$/i, '.jpg'), { type: 'image/jpeg' });
+            } catch (convErr) {
+                console.warn('HEIC conversion error:', convErr);
+            }
+            Swal.close();
         }
 
         // Hide current image

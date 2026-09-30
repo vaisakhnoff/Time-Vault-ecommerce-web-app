@@ -1,237 +1,114 @@
 <%- include("../../views/partials/user/header") %>
 
-<style>
-  .address-container {
-    margin-top: 150px;
-    max-width: 600px;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    margin-left: auto;
-    margin-right: auto;
-  }
+<main class="vault-page-wrapper">
+  <div class="container">
+    <!-- Breadcrumb Pill -->
+    <div class="vault-breadcrumb-pill">
+      <a href="/">Home</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <a href="/userProfile">Profile</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <span class="active-crumb">Address Book</span>
+    </div>
 
-  .address-heading {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 24px;
-    font-weight: bold;
-  }
+    <!-- Header Title & Action -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap" style="gap: 15px;">
+      <div>
+        <h1 class="vault-page-title">Delivery <span class="vault-gold-text">Addresses</span></h1>
+        <p class="vault-page-subtitle mb-0">Manage and allocate your dispatch destinations for insured shipments.</p>
+      </div>
+      <a href="/addAddress" class="vault-btn-primary" style="padding: 12px 24px; font-size: 14px;">
+        <i class="ti-plus"></i>
+        <span>Add New Address</span>
+      </a>
+    </div>
 
-  .address-item {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 20px;
-    background-color: #f9f9f9;
-  }
+    <% if (addresses && addresses.length > 0) { %>
+      <div class="row">
+        <% addresses.forEach(function(addressDoc) { %>
+          <% addressDoc.address.forEach(function(address) { %>
+            <div class="col-md-6 mb-4">
+              <div class="vault-card h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span style="display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 9999px; background: #fff7ed; color: #ea580c; font-size: 12px; font-weight: 700; border: 1px solid #fed7aa; text-transform: uppercase;">
+                      <%= address.addressType || 'Destination' %>
+                    </span>
+                    <div class="d-flex" style="gap: 8px;">
+                      <a href="/editAddress?id=<%= address._id %>&from=userAddress" class="vault-action-pill" style="width: 34px; height: 34px;" title="Edit Address">
+                        <i class="ti-pencil" style="font-size: 13px;"></i>
+                      </a>
+                      <button type="button" class="vault-action-pill" style="width: 34px; height: 34px; color: #dc2626; border-color: #fee2e2; background: #fef2f2;" title="Delete Address" onclick="confirmDelete('<%= address._id %>')">
+                        <i class="ti-trash" style="font-size: 13px;"></i>
+                      </button>
+                    </div>
+                  </div>
 
-  .address-details {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-
-  .address-actions {
-    text-align: right;
-  }
-
-  .btn {
-    padding: 8px 12px;
-    font-size: 14px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  .btn-edit {
-    background-color: #007bff;
-    color: #fff;
-    margin-right: 10px;
-  }
-
-  .btn-delete {
-    background-color: #dc3545;
-    color: #fff;
-  }
-
-  .btn-add {
-    display: block;
-    width: 100%;
-    margin-top: 20px;
-    background-color: #28a745;
-    color: #fff;
-    text-align: center;
-  }
-
-  .pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-    list-style: none;
-    padding: 0;
-  }
-
-  .page-item {
-    margin: 0 5px;
-  }
-
-  .page-link {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    color: #007bff;
-    text-decoration: none;
-    background-color: #fff;
-  }
-
-  .page-link:hover {
-    background-color: #f8f9fa;
-  }
-
-  .page-item.active .page-link {
-    background-color: #007bff;
-    color: #fff;
-    border-color: #007bff;
-  }
-
-  .page-item.disabled .page-link {
-    color: #6c757d;
-    pointer-events: none;
-    background-color: #fff;
-    border-color: #ddd;
-  }
-
-  /* Fixes the alert box style */
-  .swal2-popup-custom {
-    border-radius: 10px;
-    font-size: 16px;
-    padding: 20px;
-  }
-
-  /* Style for the title */
-  .swal2-title-custom {
-    font-weight: bold;
-    font-size: 22px;
-    color: #333;
-  }
-
-  /* Confirm button style */
-  .swal2-confirm-custom {
-    background-color: #d33 !important;
-    font-size: 16px;
-    border-radius: 5px;
-  }
-
-  /* Cancel button style */
-  .swal2-cancel-custom {
-    background-color: #6c757d !important;
-    font-size: 16px;
-    border-radius: 5px;
-  }
-</style>
-
-<div class="container address-container">
-  <h3 class="address-heading">My Addresses</h3>
-  
-  <% if (addresses && addresses.length > 0) { %>
-    <% addresses.forEach(function(addressDoc) { %>
-        <% addressDoc.address.forEach(function(address) { %>
-            <div class="address-item">
-                <div class="address-details">
-                    <p><strong>Name:</strong> <%= address.name %></p>
-                    <p><strong>Type:</strong> <%= address.addressType %></p>
-                    <p><strong>City:</strong> <%= address.city %></p>
-                    <p><strong>Landmark:</strong> <%= address.landMark %></p>
-                    <p><strong>State:</strong> <%= address.state %></p>
-                    <p><strong>Pincode:</strong> <%= address.pincode %></p>
-                    <p><strong>Phone:</strong> <%= address.phone_no %></p>
-                    <p><strong>Alternative Phone:</strong> <%= address.altPhone_no %></p>
+                  <h5 style="font-weight: 800; color: #0f172a; margin-bottom: 6px;"><%= address.name %></h5>
+                  <p style="color: #475569; font-size: 14px; line-height: 1.6; margin-bottom: 12px;">
+                    <%= address.city %>, <%= address.landMark ? address.landMark + ', ' : '' %><%= address.state %> - <strong><%= address.pincode %></strong>
+                  </p>
                 </div>
-                <div class="address-actions">
-                    <form method="get" action="/editAddress" style="display:inline;">
-                        <input type="hidden" name="id" value="<%= address._id %>">
-                        <input type="hidden" name="from" value="userAddress">
-                        <button type="submit" class="btn btn-edit">Edit</button>
-                    </form>
-                    <form method="post" action="/deleteAddress" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this address?')">
-                        <input type="hidden" name="addressId" value="<%= address._id %>">
-                        <button type="button" class="btn btn-delete" onclick="confirmDelete('<%= address._id %>')">Delete</button>
-                    </form>
+
+                <div class="pt-3" style="border-top: 1px solid #f1f5f9; font-size: 13px; color: #64748b;">
+                  <div><i class="ti-mobile mr-2 text-warning"></i> <%= address.phone_no %></div>
+                  <% if (address.altPhone_no) { %>
+                    <div class="mt-1"><i class="ti-headphone mr-2 text-muted"></i> Alt: <%= address.altPhone_no %></div>
+                  <% } %>
                 </div>
+              </div>
             </div>
-        <% }) %>
-    <% }); %>
-    
-    <!-- Pagination -->
-    <% if (totalPages > 1) { %>
-      <nav aria-label="Page navigation">
-        <ul class="pagination">
+          <% }) %>
+        <% }); %>
+      </div>
+
+      <!-- Pagination -->
+      <% if (totalPages > 1) { %>
+        <div class="d-flex justify-content-center align-items-center mt-3" style="gap: 6px;">
           <% if (currentPage > 1) { %>
-            <li class="page-item">
-              <a class="page-link" href="/userAddress?page=<%= currentPage - 1 %>" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-          <% } else { %>
-            <li class="page-item disabled">
-              <a class="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
+            <a href="/userAddress?page=<%= currentPage - 1 %>" class="vault-btn-glass" style="padding: 8px 16px; font-size: 13px;">Previous</a>
           <% } %>
           
           <% for (let i = 1; i <= totalPages; i++) { %>
-            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-              <a class="page-link" href="/userAddress?page=<%= i %>"><%= i %></a>
-            </li>
+            <% if (i === currentPage) { %>
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: var(--vault-gold-gradient); color: #fff; font-weight: 700; font-size: 14px; box-shadow: var(--vault-gold-glow);"><%= i %></span>
+            <% } else { %>
+              <a href="/userAddress?page=<%= i %>" style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; text-decoration: none; font-size: 14px; transition: all 0.2s;"><%= i %></a>
+            <% } %>
           <% } %>
-          
-          <% if (currentPage < totalPages) { %>
-            <li class="page-item">
-              <a class="page-link" href="/userAddress?page=<%= currentPage + 1 %>" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-          <% } else { %>
-            <li class="page-item disabled">
-              <a class="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-          <% } %>
-        </ul>
-      </nav>
-    <% } %>
-    
-  <% } else { %>
-    <p style="text-align:center;">No addresses found. Please add one.</p>
-  <% } %>
-  
-  <a href="/addAddress" class="btn btn-add">Add New Address</a>
-</div>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+          <% if (currentPage < totalPages) { %>
+            <a href="/userAddress?page=<%= currentPage + 1 %>" class="vault-btn-glass" style="padding: 8px 16px; font-size: 13px;">Next</a>
+          <% } %>
+        </div>
+      <% } %>
+    <% } else { %>
+      <div class="vault-card text-center py-5">
+        <div style="width: 70px; height: 70px; border-radius: 50%; background: #fff7ed; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+          <i class="ti-location-pin" style="font-size: 32px; color: #ff7700;"></i>
+        </div>
+        <h4 style="font-weight: 700; color: #0f172a; margin-bottom: 8px;">No Addresses Saved</h4>
+        <p style="color: #64748b; max-width: 400px; margin: 0 auto 24px;">Please save your primary shipping destination for concierge deliveries.</p>
+        <a href="/addAddress" class="vault-btn-primary">
+          <i class="ti-plus"></i>
+          <span>Add New Address</span>
+        </a>
+      </div>
+    <% } %>
+  </div>
+</main>
 
 <script>
   function confirmDelete(addressId) {
     Swal.fire({
-      title: "Are you sure?",
-      text: "This action will permanently delete the address!",
+      title: "Delete Address?",
+      text: "This destination will be permanently removed from your address book.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#6c757d",
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "Cancel",
-      customClass: {
-        popup: "swal2-popup-custom",
-        title: "swal2-title-custom",
-        confirmButton: "swal2-confirm-custom",
-        cancelButton: "swal2-cancel-custom"
-      }
+      confirmButtonColor: "#ff7700",
+      cancelButtonColor: "#94a3b8",
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "Cancel"
     }).then((result) => {
       if (result.isConfirmed) {
         fetch("/deleteAddress", {
@@ -245,7 +122,7 @@
             title: "Deleted!",
             text: data.message || "Address deleted successfully.",
             icon: "success",
-            timer: 2000,
+            timer: 1500,
             showConfirmButton: false
           }).then(() => {
             location.reload();

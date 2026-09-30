@@ -4,41 +4,24 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 
 <style>
-  /* Container style similar to your OTP container */
-  .profile-container {
-    margin-top: 150px; /* Extra top spacing to avoid header overlap */
-    max-width: 400px;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    margin-left: auto;
-    margin-right: auto;
-  }
-
   .profile-heading {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
+    font-weight: 800;
+    color: #0f172a;
   }
 
   .form-group {
     width: 100%;
-    text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
   }
 
-  .btn-primary {
-    margin-top: 15px;
-    padding: 12px;
-    font-size: 16px;
-  }
-
-  /* Cropping container */
   .cropper-container {
     width: 100%;
-    max-height: 400px;
-    margin: 10px 0;
+    max-height: 360px;
+    margin: 15px 0;
     overflow: hidden;
+    border-radius: 12px;
   }
 
   #imagePreview {
@@ -47,7 +30,17 @@
   }
 </style>
 
-<div class="container profile-container">
+<main class="vault-page-wrapper">
+  <div class="container">
+    <div class="vault-breadcrumb-pill">
+      <a href="/">Home</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <a href="/userProfile">Profile</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <span class="active-crumb">Edit Profile Image</span>
+    </div>
+
+    <div class="vault-card" style="max-width: 480px; margin: 0 auto;">
   <h3 class="profile-heading">Edit Profile</h3>
   <form id="editProfileForm" method="post" action="/updateProfile" enctype="multipart/form-data">
     <div class="form-group">
@@ -60,14 +53,14 @@
     </div>
     <!-- Hidden input to hold the cropped image as base64 string -->
     <input type="hidden" id="croppedImage" name="croppedImage">
-    <div class="form-group">
-      <button type="button" id="cropButton" class="btn btn-primary" style="display: none;">Crop Image</button>
-    </div>
-    <div class="form-group">
-      <button type="submit" class="btn btn-primary">Update Profile</button>
+    <div class="form-group text-center mt-3">
+      <button type="button" id="cropButton" class="vault-btn-glass w-100 justify-content-center mb-2" style="display: none;">Crop Image</button>
+      <button type="submit" class="vault-btn-primary w-100 justify-content-center">Update Profile</button>
     </div>
   </form>
-</div>
+    </div>
+  </div>
+</main>
 
 <!-- Cropper.js library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>

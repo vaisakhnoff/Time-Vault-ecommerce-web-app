@@ -1,119 +1,119 @@
 <%- include("../../views/partials/user/header") %>
 
-<div style="height: 150px;"></div>
+<main class="vault-page-wrapper">
+  <div class="container">
+    <!-- Breadcrumb Pill -->
+    <div class="vault-breadcrumb-pill">
+      <a href="/">Home</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <a href="/userProfile">Account</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <span class="active-crumb">My Orders</span>
+    </div>
 
-<div class="container mt-4 mb-5">
-  <div class="row">
-    <div class="col-12">
-      <h2 class="text-center mb-4">My Orders</h2>
+    <!-- Header Title -->
+    <div class="mb-4">
+      <h1 class="vault-page-title">Order <span class="vault-gold-text">History</span></h1>
+      <p class="vault-page-subtitle">Track, review, and manage your private horological acquisitions.</p>
+    </div>
 
-      <% if (orders && orders.length > 0) { %>
-        <% orders.forEach(function(order) { %>
-          <div class="card mb-4 shadow-sm p-3">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center mb-2">
+    <% if (orders && orders.length > 0) { %>
+      <div class="row">
+        <div class="col-12">
+          <% orders.forEach(function(order) { %>
+            <div class="vault-card mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap: 10px;">
                 <div>
-                  <h6 class="mb-1">Order #<%= order.orderId %></h6>
-                  <small class="text-muted">
-                    Ordered on <%= new Date(order.createdAt).toLocaleDateString() %>
+                  <h5 class="mb-1" style="font-weight: 800; color: #0f172a;">Order #<%= order.orderId %></h5>
+                  <small style="color: #64748b;">
+                    Acquired on <%= new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %>
                   </small>
                 </div>
-                <span class="badge bg-<%= 
-                  order.computedDisplayStatus === 'Delivered' ? 'success' :
-                  order.computedDisplayStatus === 'Cancelled' ? 'danger' :
-                  order.computedDisplayStatus === 'Mixed Status' ? 'info' :
-                  'warning' %>">
+                <span style="display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 9999px; font-size: 13px; font-weight: 700;
+                  <%= order.computedDisplayStatus === 'Delivered' ? 'background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0;' :
+                      order.computedDisplayStatus === 'Cancelled' ? 'background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;' :
+                      'background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa;' %>">
                   <%= order.computedDisplayStatus %>
                 </span>
               </div>
 
-              <div class="row">
+              <!-- Order Items Grid -->
+              <div class="row mb-3">
                 <% order.items.forEach(function(item) { %>
                   <div class="col-lg-4 col-md-6 mb-3">
-                    <div class="product-card p-2 border rounded text-center">
-                      <% if (item.productId && item.productId.productImage && item.productId.productImage.length > 0) { %>
-                        <img src="/uploads/product-images/<%= item.productId.productImage[0] %>"
-                             alt="<%= item.productId.productName %>"
-                             class="img-fluid mb-2 rounded" style="max-height: 100px; object-fit: contain;">
-                      <% } else { %>
-                        <img src="/uploads/product-images/default.jpg"
-                             alt="No Image"
-                             class="img-fluid mb-2 rounded" style="max-height: 100px; object-fit: contain;">
-                      <% } %>
-                      <h6 class="mb-1"><%= item.productId.productName %></h6>
-                      <small>Qty: <%= item.quantity %></small> | 
-                      <small>₹<%= item.price %></small>
+                    <div class="d-flex align-items-center p-3" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; gap: 14px;">
+                      <div style="width: 64px; height: 64px; border-radius: 8px; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;">
+                        <% if (item.productId && item.productId.productImage && item.productId.productImage.length > 0) { %>
+                          <img src="/uploads/product-images/<%= item.productId.productImage[0] %>"
+                               alt="<%= item.productId.productName %>"
+                               style="max-height: 54px; max-width: 54px; object-fit: contain;">
+                        <% } else { %>
+                          <i class="ti-time text-muted" style="font-size: 20px;"></i>
+                        <% } %>
+                      </div>
+                      <div style="overflow: hidden;">
+                        <h6 class="mb-1 text-truncate" style="font-weight: 700; color: #0f172a; font-size: 14px;"><%= item.productId ? item.productId.productName : 'Curated Timepiece' %></h6>
+                        <small style="color: #64748b;">Qty: <strong><%= item.quantity %></strong> &bull; ₹<%= item.price.toFixed(2) %></small>
+                      </div>
                     </div>
                   </div>
                 <% }); %>
               </div>
 
-              <hr class="my-3">
+              <div class="dropdown-divider my-3" style="border-color: #f1f5f9;"></div>
 
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <small>Total: ₹<%= order.totalAmount %></small><br>
-                  <small>Payment: <%= order.paymentMethod %></small><br>
-                  <small>Status: 
-                    <span class="badge bg-<%= order.paymentStatus === 'Paid' ? 'success' : 'warning' %>">
-                      <%= order.paymentStatus %>
-                    </span>
-                  </small>
+              <div class="d-flex justify-content-between align-items-center flex-wrap" style="gap: 15px;">
+                <div style="font-size: 14px;">
+                  <span class="mr-3" style="color: #64748b;">Total: <strong style="color: #0f172a; font-size: 16px;">₹<%= order.totalAmount.toFixed(2) %></strong></span>
+                  <span class="mr-3" style="color: #64748b;">Payment: <strong style="color: #0f172a;"><%= order.paymentMethod %></strong></span>
+                  <span style="color: #64748b;">Payment Status: 
+                    <strong style="color: <%= order.paymentStatus === 'Paid' ? '#16a34a' : '#ea580c' %>;"><%= order.paymentStatus %></strong>
+                  </span>
                 </div>
-                <a href="/order/<%= order.orderId %>" class="btn btn-sm btn-primary">View Details</a>
+                <a href="/order/<%= order.orderId %>" class="vault-btn-glass" style="padding: 9px 20px; font-size: 13px;">
+                  <span>View Details</span>
+                  <i class="ti-arrow-right"></i>
+                </a>
               </div>
             </div>
-          </div>
-        <% }); %>
+          <% }); %>
 
-        <!-- Pagination -->
-        <nav aria-label="Order Pagination">
-          <ul class="pagination justify-content-center">
-            <% if (currentPage > 1) { %>
-              <li class="page-item">
-                <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
-              </li>
-            <% } %>
-            
-            <% for (let i = 1; i <= totalPages; i++) { %>
-              <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-              </li>
-            <% } %>
+          <!-- Pagination -->
+          <% if (totalPages > 1) { %>
+            <div class="d-flex justify-content-center align-items-center mt-4" style="gap: 6px;">
+              <% if (currentPage > 1) { %>
+                <a href="?page=<%= currentPage - 1 %>" class="vault-btn-glass" style="padding: 8px 16px; font-size: 13px;">Previous</a>
+              <% } %>
+              
+              <% for (let i = 1; i <= totalPages; i++) { %>
+                <% if (i === currentPage) { %>
+                  <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: var(--vault-gold-gradient); color: #fff; font-weight: 700; font-size: 14px; box-shadow: var(--vault-gold-glow);"><%= i %></span>
+                <% } else { %>
+                  <a href="?page=<%= i %>" style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; text-decoration: none; font-size: 14px; transition: all 0.2s;"><%= i %></a>
+                <% } %>
+              <% } %>
 
-            <% if (currentPage < totalPages) { %>
-              <li class="page-item">
-                <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
-              </li>
-            <% } %>
-          </ul>
-        </nav>
-      <% } else { %>
-        <div class="alert alert-info text-center">
-          <p class="mb-0">You haven't placed any orders yet.</p>
-          <a href="/shopPage" class="btn btn-primary mt-3">Start Shopping</a>
+              <% if (currentPage < totalPages) { %>
+                <a href="?page=<%= currentPage + 1 %>" class="vault-btn-glass" style="padding: 8px 16px; font-size: 13px;">Next</a>
+              <% } %>
+            </div>
+          <% } %>
         </div>
-      <% } %>
-    </div>
+      </div>
+    <% } else { %>
+      <div class="vault-card text-center py-5">
+        <div style="width: 70px; height: 70px; border-radius: 50%; background: #fff7ed; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+          <i class="ti-package" style="font-size: 32px; color: #ff7700;"></i>
+        </div>
+        <h4 style="font-weight: 700; color: #0f172a; margin-bottom: 8px;">No Acquisitions Found</h4>
+        <p style="color: #64748b; max-width: 400px; margin: 0 auto 24px;">You haven't placed any timepieces on order yet.</p>
+        <a href="/shopPage" class="vault-btn-primary">
+          <span>Explore Collections</span>
+          <i class="ti-arrow-right"></i>
+        </a>
+      </div>
+    <% } %>
   </div>
-</div>
-
-<style>
-  .product-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .shadow-sm {
-    box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.1)!important;
-  }
-
-  .rounded {
-    border-radius: 0.3rem!important;
-  }
-</style>
-
+</main>
 
 <%- include("../../views/partials/user/footer") %>

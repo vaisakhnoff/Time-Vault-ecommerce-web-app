@@ -1,259 +1,183 @@
 <%- include("../../views/partials/admin/header") %>
-<head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css"/>
-  <style>
-    .col-md-3 {
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      margin: 10px;
-    }
 
-    .form-label {
-      margin-bottom: 8px;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-    }
-
-    .d-grid {
-      margin-top: 20px;
-    }
-
-    .btn-primary {
-      background-color: #007bff;
-      color: #fff;
-      border: 1px solid #007bff;
-      border-radius: 5px;
-      padding: 10px 20px;
-      cursor: pointer;
-    }
-
-    .btn-primary:hover {
-      background-color: #0056b3;
-      border-color: #0056b3;
-    }
-
-    .pagination-container {
-      text-align: center;
-    }
-
-    .pagination {
-      display: inline-block;
-    }
-
-    .pagination a,
-    .pagination .current-page {
-      display: inline-block;
-      padding: 5px 10px;
-      margin: 0 2px;
-      border: 1px solid #ddd;
-      text-decoration: none;
-      color: #333;
-    }
-
-    .pagination a:hover {
-      background-color: #f5f5f5;
-    }
-
-    .error-message {
-      color: red;
-    }
-
-    /* Add these to your existing styles */
-    .pagination {
-        margin: 20px 0;
-    }
-
-    .pagination .page-link {
-        color: #007bff;
-        background-color: #fff;
-        border: 1px solid #dee2e6;
-        padding: 0.5rem 0.75rem;
-    }
-
-    .pagination .page-item.active .page-link {
-        background-color: #007bff;
-        border-color: #007bff;
-        color: #fff;
-    }
-
-    .pagination .page-link:hover {
-        background-color: #e9ecef;
-        border-color: #dee2e6;
-        color: #0056b3;
-    }
-
-    .pagination .page-item.disabled .page-link {
-        color: #6c757d;
-        pointer-events: none;
-        background-color: #fff;
-        border-color: #dee2e6;
-    }
-  </style>
-</head>
-<body>
-  <section class="content-main">
+<section class="content-main">
     <div class="content-header">
-      <div>
-        <h2 class="content-title card-title">Category</h2>
-      </div>
-    </div>
-    <header class="card-header text-center mb-20">
-      <form action="/admin/category/" method="get" class="d-inline">
-        <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin-left: 230px">
-          <input type="text" class="form-control border-0 rounded-pill mt-3" placeholder="Search categories" name="search"/>
-          <button class="btn" type="submit">Search</button>
+        <div>
+            <h2 class="content-title card-title">Category Management</h2>
+            <p class="content-subtitle">Organize products into distinct watch categories</p>
         </div>
-      </form>
-    </header>
-    <div class="card">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-3">
-            <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
-              <div class="mb-4">
-                <label for="product_name" class="form-label">Name</label>
-                <input type="text" name="name" placeholder="Type here" class="form-control" id="product_name" />
-                <div id="name-error" class="error-message"></div>
-              </div>
-              <div class="mb-4">
-                <label class="form-label">Description</label>
-                <textarea placeholder="Type here" name="description" class="form-control" id="descriptionId" ></textarea>
-                <div id="description-error" class="error-message"></div>
-              </div>
-              <div class="d-grid">
-                <button class="btn btn-primary" type="submit">
-                  Create category
-                </button>
-              </div>
+        <div>
+            <form action="/admin/category/" method="get" class="d-flex align-items-center">
+                <div class="tv-search-bar">
+                    <i class="material-icons md-search text-muted"></i>
+                    <input type="text" placeholder="Search categories..." name="search" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+                    <button type="submit">Search</button>
+                </div>
             </form>
-          </div>
-          <div class="col-md-8 ml-10">
-            <div class="table-responsive">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th class="text-center"></th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Offer Price</th>
-                    <th>Offer</th>
-                    <th>Status</th>
-                    <th>List/Unlist</th>
-                    <th class="text-start">Edit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    <%cat.reverse().forEach((category,index)=>{%>
-                  <tr>
-                    <td></td>
-                    <td class="text-start"><%=category.name%></td>
-                    <td class="text-start"><%=category.description%></td>
-                    <td id="offer-value-<%= category._id %>">
-                        <% if(category.categoryOffer){ %>
-                          <%= category.categoryOffer %>%
-                        <% } else { %>
-                          0%
-                        <% } %>
-                      </td>
-                      <td class="text-start">
-                        <% if(category.categoryOffer === 0 || !category.categoryOffer){ %>
-                          <button id="offer-btn-<%= category._id %>" class="btn btn-info" style="width: 100px">
-                            <a href="#" class="text-white" onclick="addOffer('<%= category._id %>')">Add Offer</a>
-                          </button>
-                        <% } else { %>
-                          <button id="offer-btn-<%= category._id %>" class="btn btn-info" style="width: 100px">
-                            <a href="#" class="text-white" onclick="removeOffer('<%= category._id %>')">Remove</a>
-                          </button>
-                        <% } %>
-                      </td>
-                      
-                      <td class="text-start" id="listing-status-<%= category._id %>">
-                        <% if (category.isListed) { %>
-                          <span class="badge rounded-pill alert-success" style="width: 60px">Listed</span>
-                        <% } else { %>
-                          <span class="badge rounded-pill alert-danger" style="width: 60px">Unlisted</span>
-                        <% } %>
-                      </td>
-                      <td class="text-start">
-                        <button id="listing-btn-<%= category._id %>" class="btn <%= category.isListed ? 'btn-danger' : 'btn-success' %>" style="width: 70px" onclick="toggleListing('<%= category._id %>', '<%= category.isListed %>')">
-                          <span class="text-white"><%= category.isListed ? 'Unlist' : 'List' %></span>
-                        </button>
-                      </td>
-                      <td class="text-start">
-                        <a href="/admin/editCategory?id=<%=category._id%>"   class="btn btn-info text-white">Edit</a>
-                      </td>
-                  </tr>
-                    <%})%>
-                </tbody>
-              </table>
-            </div> <!-- close table-responsive -->
-          </div> <!-- close col-md-8 -->
-        </div> <!-- close row -->
-      </div> <!-- close card-body -->
-    </div> <!-- close card -->
-
-    <!-- Add pagination at the bottom with proper spacing -->
-    <div class="pagination-wrapper mt-4 mb-4">
-      <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-          <!-- Previous button -->
-          <% if (currentPage > 0) { %>
-            <li class="page-item">
-              <a class="page-link" href="?page=<%= currentPage - 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-          <% } %>
-
-          <!-- Page numbers -->
-          <% for(let i = 0; i < totalPages; i++) { %>
-            <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
-              <a class="page-link" href="?page=<%= i %><%= searchQuery ? '&search=' + searchQuery : '' %>">
-                <%= i + 1 %>
-              </a>
-            </li>
-          <% } %>
-
-          <!-- Next button -->
-          <% if (currentPage < totalPages - 1) { %>
-            <li class="page-item">
-              <a class="page-link" href="?page=<%= currentPage + 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-          <% } %>
-        </ul>
-      </nav>
+        </div>
     </div>
 
-    
-    <!-- Optional: Add page info -->
-    <div class="text-center mt-2">
-        <small class="text-muted">
-            Showing <%= (currentPage * perPage) + 1 %> to <%= Math.min((currentPage + 1) * perPage, total) %> of <%= total %> entries
-        </small>
-    </div>
-</div>
+    <div class="row g-4">
+        <!-- Left Column: Add Category Form -->
+        <div class="col-lg-4 col-md-12">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0" style="font-size: 1rem; font-weight: 600;">Create New Category</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
+                        <div class="mb-3">
+                            <label for="product_name" class="form-label">Category Name</label>
+                            <input type="text" name="name" placeholder="e.g. Chronograph Watches" class="form-control" id="product_name" />
+                            <div id="name-error" class="text-danger small mt-1" style="display: none;"></div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea placeholder="Provide detailed category description..." name="description" class="form-control" id="descriptionId" rows="4"></textarea>
+                            <div id="description-error" class="text-danger small mt-1" style="display: none;"></div>
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-primary w-100" type="submit">
+                                <i class="material-icons md-add_circle" style="font-size: 1.1rem;"></i> Create Category
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-      
-  </section>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <!-- Right Column: Category List Table -->
+        <div class="col-lg-8 col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0" style="font-size: 1rem; font-weight: 600;">Existing Categories</h5>
+                    <span class="badge bg-light text-dark" style="border: 1px solid var(--tv-border); font-size: 0.8rem;">
+                        <%= total %> Categories
+                    </span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive-modern">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Category Details</th>
+                                    <th>Offer</th>
+                                    <th>Offer Action</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (cat && cat.length > 0) { %>
+                                    <% cat.forEach((category) => { %>
+                                        <tr>
+                                            <td>
+                                                <div style="font-weight: 600; color: var(--tv-text-main);">
+                                                    <%= category.name %>
+                                                </div>
+                                                <div class="text-muted text-truncate" style="max-width: 200px; font-size: 0.8rem;">
+                                                    <%= category.description %>
+                                                </div>
+                                            </td>
+                                            <td id="offer-value-<%= category._id %>">
+                                                <% if(category.categoryOffer) { %>
+                                                    <span class="tv-badge tv-badge-info">
+                                                        <span class="tv-badge-dot"></span> <%= category.categoryOffer %>% Off
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="text-muted small">0%</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <div id="offer-btn-<%= category._id %>">
+                                                    <% if(!category.categoryOffer || category.categoryOffer === 0) { %>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="addOffer('<%= category._id %>')">
+                                                            <i class="material-icons md-local_offer" style="font-size: 0.9rem;"></i> Add
+                                                        </button>
+                                                    <% } else { %>
+                                                        <button class="btn btn-sm btn-danger" onclick="removeOffer('<%= category._id %>')">
+                                                            Remove
+                                                        </button>
+                                                    <% } %>
+                                                </div>
+                                            </td>
+                                            <td id="listing-status-<%= category._id %>">
+                                                <% if (category.isListed) { %>
+                                                    <span class="tv-badge tv-badge-success">
+                                                        <span class="tv-badge-dot"></span> Listed
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="tv-badge tv-badge-danger">
+                                                        <span class="tv-badge-dot"></span> Unlisted
+                                                    </span>
+                                                <% } %>
+                                            </td>
+                                            <td class="text-end">
+                                                <div class="d-inline-flex gap-2">
+                                                    <button id="listing-btn-<%= category._id %>" class="btn btn-sm <%= category.isListed ? 'btn-secondary' : 'btn-success' %>" onclick="toggleListing('<%= category._id %>', <%= category.isListed %>)">
+                                                        <%= category.isListed ? 'Unlist' : 'List' %>
+                                                    </button>
+                                                    <a href="/admin/editCategory?id=<%=category._id%>" class="btn btn-sm btn-primary">
+                                                        <i class="material-icons md-edit" style="font-size: 0.9rem;"></i> Edit
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">
+                                            <div class="text-muted">
+                                                <i class="material-icons md-category" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                                                <p class="mt-2 mb-0">No categories found</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <% if (totalPages > 1) { %>
+                    <div class="card-footer bg-white border-top py-3">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination mb-0">
+                                <% if (currentPage > 0) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage - 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>">&laquo;</a>
+                                    </li>
+                                <% } %>
+                                <% for(let i = 0; i < totalPages; i++) { %>
+                                    <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %><%= searchQuery ? '&search=' + searchQuery : '' %>"><%= i + 1 %></a>
+                                    </li>
+                                <% } %>
+                                <% if (currentPage < totalPages - 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>">&raquo;</a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                        <div class="text-center mt-2">
+                            <small class="text-muted">
+                                Showing <%= (currentPage * perPage) + 1 %> to <%= Math.min((currentPage + 1) * perPage, total) %> of <%= total %> entries
+                            </small>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
 <%- include("../../views/partials/admin/footer") %>
-
 
 <script>
     function handleFormSubmit(event) {
         event.preventDefault();
-        if (!validateForm()) {  // Correctly call the validation function
+        if (!validateForm()) {
             return;
         }
         const name = document.getElementsByName('name')[0].value.trim();
@@ -264,10 +188,7 @@
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ 
-                name,
-                description  // Make sure this matches the schema field name
-            })
+            body: JSON.stringify({ name, description })
         })
         .then(response => response.json())
         .then(data => {
@@ -297,7 +218,6 @@
         const description = document.getElementById("descriptionId").value.trim();
         let isValid = true;
 
-        // Name validation
         if (name === "") {
             displayErrorMessage("name-error", "Category name is required");
             isValid = false;
@@ -309,7 +229,6 @@
             isValid = false;
         }
 
-        // Description validation
         if (description === "") {
             displayErrorMessage("description-error", "Description is required");
             isValid = false;
@@ -322,149 +241,105 @@
     }
   
     function displayErrorMessage(elementId, message) {
-        var errorelement = document.getElementById(elementId);
-        errorelement.innerText = message;
-        errorelement.style.display = 'block';
+        const errorElement = document.getElementById(elementId);
+        if (errorElement) {
+            errorElement.innerText = message;
+            errorElement.style.display = 'block';
+        }
     }
   
     function clearErrorMessages() {
-        const errorElements = document.getElementsByClassName('error-message');
-        Array.from(errorElements).forEach((element) => {
-            element.innerText = "";
-            element.style.display = "none";
-        });
+        const nameErr = document.getElementById('name-error');
+        const descErr = document.getElementById('description-error');
+        if (nameErr) { nameErr.innerText = ''; nameErr.style.display = 'none'; }
+        if (descErr) { descErr.innerText = ''; descErr.style.display = 'none'; }
     }
 
     async function addOffer(categoryId) {
-    const { value: amount } = await Swal.fire({
-        title: "Offer in percentage",
-        input: "number",
-        inputLabel: "Percentage",
-        inputPlaceholder: "%"
-    });
-    if (amount) {
+        const { value: amount } = await Swal.fire({
+            title: "Offer in percentage",
+            input: "number",
+            inputLabel: "Percentage",
+            inputPlaceholder: "%",
+            inputAttributes: { min: 1, max: 99, step: 1 }
+        });
+        if (amount) {
+            try {
+                const response = await fetch('/admin/addCategoryOffer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ percentage: amount, categoryId: categoryId })
+                });
+                const data = await response.json();
+                if (response.ok && data.status === true) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Offer added",
+                        text: "Offer added successfully"
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire("Failed", data.message || "Adding Offer Failed", "error");
+                }
+            } catch (error) {
+                Swal.fire("Error", "An error occurred while adding the offer", "error");
+                console.error("Error adding offer", error);
+            }
+        }
+    }
+
+    async function removeOffer(categoryId) {
         try {
-            const response = await fetch('/admin/addCategoryOffer', {
+            const response = await fetch("/admin/removeCategoryoffer", {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    percentage: amount,
-                    categoryId: categoryId,
-                })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ categoryId: categoryId })
             });
             const data = await response.json();
             if (response.ok && data.status === true) {
                 Swal.fire({
                     icon: "success",
-                    title: "Offer added",
-                    text: "Offer added successfully"
+                    title: "Offer removed",
+                    text: "The offer has been removed"
                 }).then(() => {
-                    // Update the offer value in the table
-                    document.getElementById("offer-value-" + categoryId).innerText = amount + "%";
-                    // Change the button to "Remove"
-                    document.getElementById("offer-btn-" + categoryId).innerHTML =
-                        '<a href="#" class="text-white" onclick="removeOffer(\'' + categoryId + '\')">Remove</a>';
+                    location.reload();
                 });
             } else {
-                Swal.fire("Failed", data.message || "Adding Offer Failed", "error");
+                Swal.fire("Failed", data.message || "Removing offer failed", "error");
             }
         } catch (error) {
-            Swal.fire("Error", "An error occurred while adding the offer", "error");
-            console.error("Error adding offer", error);
+            Swal.fire("Error", "An error occurred while removing the offer", "error");
+            console.error("Error removing offer", error);
         }
     }
-}
 
-
-async function removeOffer(categoryId) {
-    try {
-        const response = await fetch("/admin/removeCategoryoffer", {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                categoryId: categoryId,
-            })
-        });
-        const data = await response.json();
-        if (response.ok && data.status === true) {
-            Swal.fire({
-                icon: "success",
-                title: "Offer removed",
-                text: "The offer has been removed"
-            }).then(() => {
-                // Set the offer value back to 0%
-                document.getElementById("offer-value-" + categoryId).innerText = "0%";
-                // Change the button to "Add Offer"
-                document.getElementById("offer-btn-" + categoryId).innerHTML =
-                    '<a href="#" class="text-white" onclick="addOffer(\'' + categoryId + '\')">Add Offer</a>';
+    async function toggleListing(categoryId, isListed) {
+        const endpoint = isListed ? "/admin/listCategory" : "/admin/unlistCategory";
+        try {
+            const response = await fetch(`${endpoint}?id=${categoryId}`, { 
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
             });
-        } else {
-            Swal.fire("Failed", data.message || "Removing offer failed", "error");
+            const data = await response.json();
+            if (response.ok && data.status === true) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: `Category ${!isListed ? 'listed' : 'unlisted'} successfully`
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                throw new Error(data.message || "Failed to update listing status");
+            }
+        } catch (error) {
+            console.error("Error toggling listing:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: error.message || "An error occurred while updating listing status"
+            });
         }
-    } catch (error) {
-        Swal.fire("Error", "An error occurred while removing the offer", "error");
-        console.error("Error removing offer", error);
     }
-}
-
-async function toggleListing(categoryId, isListed) {
-  // Corrected: if category is listed, call the endpoint to unlist it.
-  const endpoint = isListed ? "/admin/listCategory" : "/admin/unlistCategory";
-  
-  try {
-    const response = await fetch(`${endpoint}?id=${categoryId}`, { 
-      method: "GET",
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    const data = await response.json();
-    if (response.ok && data.status === true) {
-      // Update UI with the new status (flip the current status)
-      const newStatus = !isListed;
-      updateListingUI(categoryId, newStatus);
-      
-      Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: `Category ${newStatus ? 'listed' : 'unlisted'} successfully`
-      });
-    } else {
-      throw new Error(data.message || "Failed to update listing status");
-    }
-  } catch (error) {
-    console.error("Error toggling listing:", error);
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: error.message || "An error occurred while updating listing status"
-    });
-  }
-}
-
-
-// Add this helper function to update UI
-function updateListingUI(categoryId, isListed) {
-  const statusElement = document.getElementById(`listing-status-${categoryId}`);
-  const buttonElement = document.getElementById(`listing-btn-${categoryId}`);
-  
-  statusElement.innerHTML = isListed 
-    ? '<span class="badge rounded-pill alert-success" style="width: 60px">Listed</span>'
-    : '<span class="badge rounded-pill alert-danger" style="width: 60px">Unlisted</span>';
-    
-  buttonElement.className = isListed ? 'btn btn-danger' : 'btn btn-success';
-  buttonElement.innerHTML = `<span class="text-white">${isListed ? 'Unlist' : 'List'}</span>`;
-  
-  // Update the onclick handler with the new status
-  buttonElement.setAttribute('onclick', `toggleListing('${categoryId}', ${isListed})`);
-}
-
-
-
-
-  </script>
+</script>

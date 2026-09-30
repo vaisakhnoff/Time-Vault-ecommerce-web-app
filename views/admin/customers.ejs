@@ -1,86 +1,145 @@
 <%- include("../../views/partials/admin/header") %>
-<div class="content-header row">
-    <div class="d-flex justify-content-between align-items-center">
-        <h2 class="content-title card-title">Customers</h2>
-       
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Customer Management</h2>
+            <p class="content-subtitle">View and manage registered user accounts</p>
+        </div>
+        <div>
+            <form action="/admin/users/" method="get" class="d-flex align-items-center">
+                <div class="tv-search-bar">
+                    <i class="material-icons md-search text-muted"></i>
+                    <input type="text" placeholder="Search customers by name or email..." name="search" value="<%= typeof search !== 'undefined' ? search : '' %>">
+                    <button type="submit">Search</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>         
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0" style="font-size: 1rem; font-weight: 600;">Registered Customers</h5>
+            <span class="badge bg-light text-dark" style="border: 1px solid var(--tv-border); font-size: 0.8rem;">
+                Total on Page: <%= data.length %>
+            </span>
         </div>
         
-            <header class="card-header text-center mb-20">
-                <form action="/admin/users/" method="get" class="d-inline">
-                    <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin-left: 230px;">
-                        <input type="text" class="form-control border-0 rounded-pill" placeholder="Search customers..." name="search">
-                        <button class="btn  border-0" type="submit">Search</button>
-                    </div>
-                </form>
-            </header>
-            <div class="right mt-5">
-                <table class="table table-striped">
+        <div class="card-body p-0">
+            <div class="table-responsive-modern">
+                <table class="table align-middle">
                     <thead>
-                      <tr>
-                        <th scope="col"><b>First Name</b></th>
-                        <th scope="col"><b>Last Name</b></th>
-                        <th scope="col"><b>Email</b></th>
-                        <th scope="col"><b>Phone No</b></th>
-                        <th scope="col"><b>Action</b></th>
-                      </tr>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Email Address</th>
+                            <th>Phone Number</th>
+                            <th>Account Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        <% for(let i = 0; i < data.length; i++) { %>
-                          <tr>
-                            <td><%= data[i].firstName %></td>
-                            <td><%= data[i].lastName %></td>
-                            <td><%= data[i].email %></td>
-                            <td><%= data[i].phoneNumber %></td>
-                            <td>
-                              <% if(data[i].isBlocked === false) { %>
-                                <button class="btn btn-danger action-btn blockCustomer" data-id="<%= data[i]._id %>">
-                                  Block
-                                </button>
-                              <% } else { %>
-                                <button class="btn btn-success action-btn unblockCustomer" data-id="<%= data[i]._id %>">
-                                  Unblock
-                                </button>
-                              <% } %>
-                            </td>
-                          </tr>
+                        <% if (data && data.length > 0) { %>
+                            <% for(let i = 0; i < data.length; i++) { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="tv-user-avatar">
+                                                <%= (data[i].firstName ? data[i].firstName.charAt(0) : 'U').toUpperCase() %><%= (data[i].lastName ? data[i].lastName.charAt(0) : '').toUpperCase() %>
+                                            </div>
+                                            <div>
+                                                <div style="font-weight: 600; color: var(--tv-text-main);">
+                                                    <%= data[i].firstName %> <%= data[i].lastName %>
+                                                </div>
+                                                <div style="font-size: 0.75rem; color: var(--tv-text-muted);">
+                                                    ID: <%= data[i]._id.toString().slice(-6) %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span style="color: var(--tv-text-main); font-weight: 500;"><%= data[i].email %></span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted"><%= data[i].phoneNumber || 'N/A' %></span>
+                                    </td>
+                                    <td>
+                                        <% if(data[i].isBlocked) { %>
+                                            <span class="tv-badge tv-badge-danger">
+                                                <span class="tv-badge-dot"></span> Blocked
+                                            </span>
+                                        <% } else { %>
+                                            <span class="tv-badge tv-badge-success">
+                                                <span class="tv-badge-dot"></span> Active
+                                            </span>
+                                        <% } %>
+                                    </td>
+                                    <td class="text-end">
+                                        <% if(data[i].isBlocked === false) { %>
+                                            <button class="btn btn-sm btn-danger action-btn blockCustomer" data-id="<%= data[i]._id %>">
+                                                <i class="material-icons md-block" style="font-size: 1rem;"></i> Block
+                                            </button>
+                                        <% } else { %>
+                                            <button class="btn btn-sm btn-success action-btn unblockCustomer" data-id="<%= data[i]._id %>">
+                                                <i class="material-icons md-check_circle" style="font-size: 1rem;"></i> Unblock
+                                            </button>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="material-icons md-person_off" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                                        <p class="mt-2 mb-0">No customers found matching your criteria</p>
+                                    </div>
+                                </td>
+                            </tr>
                         <% } %>
-                      </tbody>
-                      
-                  </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="container mt-3">
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
-                    <% for(let i = 0; i < totalPages; i++) { %>
-                      <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
-                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                      </li>
-                    <% } %>
-                  </ul>
-                  
-            </nav>
-        </div>
-        <%- include("../../views/partials/admin/footer") %>
-        <script>
+
+        <% if (totalPages > 1) { %>
+            <div class="card-footer bg-white border-top py-3">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination mb-0">
+                        <% for(let i = 0; i < totalPages; i++) { %>
+                            <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %><%= typeof search !== 'undefined' && search ? '&search=' + search : '' %>">
+                                    <%= i + 1 %>
+                                </a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+            </div>
+        <% } %>
+    </div>
+</section>
+
+<%- include("../../views/partials/admin/footer") %>
+
+<script>
 document.addEventListener('DOMContentLoaded', () => {
   // Using event delegation to catch clicks on block/unblock buttons
   document.addEventListener('click', async (event) => {
-    const target = event.target;
-    
-    if (target.matches('.blockCustomer')) {
-      event.preventDefault();
-      const id = target.getAttribute('data-id');
-      
-      // Show confirmation dialog before blocking
+    const button = event.target.closest('.blockCustomer, .unblockCustomer');
+    if (!button) return;
+
+    event.preventDefault();
+    const id = button.getAttribute('data-id');
+    const isBlocking = button.classList.contains('blockCustomer');
+
+    if (isBlocking) {
       const result = await Swal.fire({
         title: 'Block User?',
         text: 'Are you sure you want to block this user?',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
         confirmButtonText: 'Yes, block user',
         cancelButtonText: 'Cancel'
       });
@@ -91,25 +150,19 @@ document.addEventListener('DOMContentLoaded', () => {
           const data = await response.json();
           
           if (data.success) {
-            // Show success message
             await Swal.fire({
               icon: 'success',
               title: 'User Blocked',
               text: 'The user has been blocked successfully',
-              confirmButtonColor: '#28a745'
+              confirmButtonColor: '#10b981'
             });
-            
-            // Update the button
-            target.classList.remove('blockCustomer', 'btn-danger');
-            target.classList.add('unblockCustomer', 'btn-success');
-            target.textContent = 'Unblock';
+            location.reload();
           } else {
-            // Show error message
             await Swal.fire({
               icon: 'error',
               title: 'Error',
               text: data.message || 'Failed to block user',
-              confirmButtonColor: '#dc3545'
+              confirmButtonColor: '#ef4444'
             });
           }
         } catch (error) {
@@ -118,22 +171,18 @@ document.addEventListener('DOMContentLoaded', () => {
             icon: 'error',
             title: 'Error',
             text: 'Failed to block user. Please try again.',
-            confirmButtonColor: '#dc3545'
+            confirmButtonColor: '#ef4444'
           });
         }
       }
-    } else if (target.matches('.unblockCustomer')) {
-      event.preventDefault();
-      const id = target.getAttribute('data-id');
-      
-      // Show confirmation dialog before unblocking
+    } else {
       const result = await Swal.fire({
         title: 'Unblock User?',
         text: 'Are you sure you want to unblock this user?',
         icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#28a745',
-        cancelButtonColor: '#6c757d',
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#64748b',
         confirmButtonText: 'Yes, unblock user',
         cancelButtonText: 'Cancel'
       });
@@ -144,25 +193,19 @@ document.addEventListener('DOMContentLoaded', () => {
           const data = await response.json();
           
           if (data.success) {
-            // Show success message
             await Swal.fire({
               icon: 'success',
               title: 'User Unblocked',
               text: 'The user has been unblocked successfully',
-              confirmButtonColor: '#28a745'
+              confirmButtonColor: '#10b981'
             });
-            
-            // Update the button
-            target.classList.remove('unblockCustomer', 'btn-success');
-            target.classList.add('blockCustomer', 'btn-danger');
-            target.textContent = 'Block';
+            location.reload();
           } else {
-            // Show error message
             await Swal.fire({
               icon: 'error',
               title: 'Error',
               text: data.message || 'Failed to unblock user',
-              confirmButtonColor: '#dc3545'
+              confirmButtonColor: '#ef4444'
             });
           }
         } catch (error) {
@@ -171,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
             icon: 'error',
             title: 'Error',
             text: 'Failed to unblock user. Please try again.',
-            confirmButtonColor: '#dc3545'
+            confirmButtonColor: '#ef4444'
           });
         }
       }
@@ -179,4 +222,3 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
-

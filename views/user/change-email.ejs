@@ -1,29 +1,35 @@
 <%- include("../../views/partials/user/header") %>
 
-<style>
-  /* Example custom style to prevent overlap by the header */
-  .content-main {
-    margin-top: 120px; /* Adjust to be larger than your header’s height */
-    margin-bottom: 80px;
-  }
-</style>
+<main class="vault-page-wrapper">
+  <div class="container">
+    <div class="vault-breadcrumb-pill">
+      <a href="/">Home</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <a href="/userProfile">Profile</a>
+      <span class="sep"><i class="ti-angle-right"></i></span>
+      <span class="active-crumb">Change Email</span>
+    </div>
 
-<section class="content-main">
-  <div class="card mx-auto card-login col-4">
-    <div class="card-body">
-      <h4 class="card-title mb-4">Enter Current Email</h4>
+    <div class="vault-card" style="max-width: 440px; margin: 0 auto;">
+      <h4 style="font-weight: 800; color: #0f172a; margin-bottom: 8px; text-align: center;">Verify Current Email</h4>
+      <p style="color: #64748b; font-size: 14px; text-align: center; margin-bottom: 24px;">Confirm your registered email to proceed with modification.</p>
+      
       <form method="post" action="/changeEmail" onsubmit="return validateLoginForm()">
         <div class="mb-3">
-          <input class="form-control" name="email" placeholder="Email" type="text" id="email">
-          <div class="error-message" id="email-error"></div>
+          <label style="font-weight: 600; color: #0f172a; font-size: 13px;">Registered Email Address</label>
+          <input class="form-control" name="email" placeholder="name@domain.com" type="text" id="email" style="border-radius: 8px; padding: 10px 14px; border: 1px solid #e2e8f0;">
+          <div class="invalid-feedback text-danger mt-1" id="email-error" style="font-size: 13px;"></div>
         </div>
-        <div class="mb-4">
-          <button type="submit" class="btn btn-primary w-100">Verify</button>
+        <div class="mt-4">
+          <button type="submit" class="vault-btn-primary w-100 justify-content-center" style="cursor: pointer;">
+            <span>Verify & Continue</span>
+            <i class="ti-arrow-right"></i>
+          </button>
         </div>
       </form>
     </div>
   </div>
-</section>
+</main>
 
 <script>
   function validateLoginForm() {

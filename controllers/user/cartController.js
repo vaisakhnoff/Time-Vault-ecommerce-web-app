@@ -40,7 +40,7 @@ const addToCart = async (req, res) => {
     if (!userId) {
       return res
         .status(401)
-        .json({ success: false, message: "User not authenticated" });
+        .json({ success: false, message: "User not authenticated", redirect: "/login" });
     }
     
 

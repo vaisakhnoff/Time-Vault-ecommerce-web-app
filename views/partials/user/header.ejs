@@ -1,24 +1,20 @@
 <!DOCTYPE html>
-<html lang="zxx" class="no-js">
+<html lang="en">
 
 <head>
-    <!-- Mobile Specific Meta -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Favicon-->
-    <link rel="shortcut icon" href="img/fav.png">
-    <!-- Author Meta -->
-    <meta name="author" content="CodePixar">
-    <!-- Meta Description -->
-    <meta name="description" content="">
-    <!-- Meta Keyword -->
-    <meta name="keywords" content="">
-    <!-- meta character set -->
+    <link rel="shortcut icon" href="/img/fav.png">
+    <meta name="author" content="TimeVault">
+    <meta name="description" content="Time Vault - Curated Luxury Horology & Masterpieces.">
     <meta charset="UTF-8">
-    <!-- Site Title -->
-    <title>TIME VAULT</title>
-    <!--
-    CSS
-    ============================================= -->
+    <title>TIME VAULT | Luxury Horology & Curated Timepieces</title>
+
+    <!-- Google Fonts & Modern Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="/css/linearicons.css">
     <link rel="stylesheet" href="/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/themify-icons.css">
@@ -30,181 +26,131 @@
     <link rel="stylesheet" href="/css/ion.rangeSlider.skinFlat.css" />
     <link rel="stylesheet" href="/css/magnific-popup.css">
     <link rel="stylesheet" href="/css/main.css">
-   <style>
-    #imgtag{
-      width: 13rem;
-      height: 3rem;
-    }
-    .wishlist {
-        color: #222;
-        font-size: 18px;
-        padding: 0px 15px;
-    }
-    .wishlist:hover {
-        color: #ff0000;
-    }
-    /* Added CSS Loader Styles */
-    #cssLoader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #fff;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .loader {
-        border: 8px solid #f3f3f3;
-        border-top: 8px solid #3498db;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    /* Critical CSS loader styles */
-    body {
-        visibility: hidden;
-        margin: 0;
-        padding: 0;
-    }
-    #initialLoader {
-        visibility: visible;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #ffffff;
-        z-index: 99999;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    #initialLoader .loader {
-        border: 8px solid #f3f3f3;
-        border-top: 8px solid #3498db;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        animation: spin 1s linear infinite;
-    }
-   </style>
-   <!-- Hide content until CSS loads -->
-   <script>
-       document.write('<div id="initialLoader"><div class="loader"></div></div>');
-   </script>
-   <script>
-       window.addEventListener('load', function() {
-           document.body.style.visibility = 'visible';
-           const loader = document.getElementById('initialLoader');
-           if (loader) {
-               loader.style.display = 'none';
-           }
-       });
-   </script>
+    <link rel="stylesheet" href="/css/timevault-premium.css">
 
+    <style>
+        .search_input {
+            position: fixed;
+            top: -100px;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 13, 20, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1050;
+            padding: 20px 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+        }
+        .search_input.active {
+            top: 0;
+        }
+        .search-inner {
+            max-width: 650px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .search-inner input {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 9999px;
+            padding: 12px 60px 12px 24px;
+            color: #fff;
+            width: 100%;
+            font-size: 16px;
+            outline: none;
+        }
+        .search-inner input:focus {
+            border-color: #d4af37;
+            background: rgba(255,255,255,0.1);
+        }
+        .search-inner .search-close-btn {
+            position: absolute;
+            right: 18px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
 
-    <!-- Start Header Area -->
-    <header class="header_area sticky-header">
+    <!-- Start Floating Glass Header -->
+    <header class="header_area sticky-header" id="vaultHeader">
         <div class="main_menu">
-            <nav class="navbar navbar-expand-lg navbar-light main_box">
-                <div class="container">
-                    <!-- Brand and toggle get grouped for better mobile display -->
-                    <a class="navbar-brand logo_h" href="/"><img  id="imgtag"   src="img/logo.png" alt=""></a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <!-- Collect the nav links, forms, and other content for toggling -->
-                    <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
-                        <ul class="nav navbar-nav menu_nav ml-auto">
-                            <li class="nav-item active"><a class="nav-link" href="/">Home</a></li>
-                           
-                              <!-- <a href="/shopPage" class="nav-link dropdown-toggle" data-toggle="dropdown">Shop</a> -->
-                              <li class="nav-item"><a class="nav-link" href="/shopPage">Shop</a></li>
+            <nav class="navbar navbar-expand-lg main_box">
+                <div class="container-fluid px-lg-3">
+                    <!-- Brand Identity -->
+                    <a class="navbar-brand logo_h vault-brand-logo" href="/">
+                        <div class="vault-brand-symbol">
+                            <i class="ti-time"></i>
+                        </div>
+                        <div class="vault-brand-text">TIME<span>VAULT</span></div>
+                    </a>
 
-                             
-                           
-                         
-                            <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
-                            <% if (typeof user !== 'undefined' && user) { %>
-                                <!-- When logged in, display the user's name with a dropdown -->
-                                <li class="nav-item submenu dropdown">
-                                  <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                                     <%= user.firstName %>
-                                  </a>
-                                  <ul class="dropdown-menu">
-                                    <li class="nav-item"><a class="nav-link" href="/userProfile">Profile</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
-                                  </ul>
-                                </li>
-                              <% } else { %>
-                                <!-- When not logged in, display Login and Sign Up -->
-                                <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
-                                <li class="nav-item"><a class="nav-link" href="/signup">Sign Up</a></li>
-                              <% } %>
-                              
-                          </ul>
-                          
-                        <ul class="nav navbar-nav navbar-right">
-                            <li class="nav-item"><a href="/cartPage" class="cart"><span class="ti-bag"></span></a></li>
-                            <li class="nav-item"><a href="/wishlist" class="wishlist"><span class="ti-heart"></span></a></li>
+                    <!-- Mobile Toggle -->
+                    <button class="navbar-toggler vault-mobile-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="ti-menu"></span>
+                    </button>
+
+                    <!-- Nav Links & Actions -->
+                    <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav menu_nav mx-auto">
+                            <li class="nav-item active"><a class="nav-link" href="/">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/shopPage">Collections</a></li>
                         </ul>
+
+                        <div class="nav-actions-group">
+                            <button class="vault-action-pill search-toggle-btn" id="openSearchBtn" title="Search Vault">
+                                <span class="ti-search"></span>
+                            </button>
+
+                            <a href="/wishlist" class="vault-action-pill" title="Wishlist">
+                                <span class="ti-heart"></span>
+                            </a>
+
+                            <a href="/cartPage" class="vault-action-pill" title="Bag">
+                                <span class="ti-bag"></span>
+                            </a>
+
+                            <% if (typeof user !== 'undefined' && user) { %>
+                                <div class="dropdown d-inline-block">
+                                    <button class="btn vault-auth-btn vault-auth-btn-ghost dropdown-toggle d-flex align-items-center" type="button" id="userMenuBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="ti-user mr-2 text-warning"></i>
+                                        <span><%= user.firstName %></span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right vault-dropdown" aria-labelledby="userMenuBtn">
+                                        <a class="dropdown-item" href="/userProfile"><i class="ti-id-badge mr-2"></i>My Profile</a>
+                                        <a class="dropdown-item" href="/userOrders"><i class="ti-package mr-2"></i>Orders</a>
+                                        <a class="dropdown-item" href="/wallet"><i class="ti-wallet mr-2"></i>Vault Wallet</a>
+                                        <div class="dropdown-divider" style="border-color: rgba(255,255,255,0.08);"></div>
+                                        <a class="dropdown-item text-danger" href="/logout"><i class="ti-power-off mr-2"></i>Logout</a>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <a href="/login" class="vault-auth-btn vault-auth-btn-ghost">Login</a>
+                                <a href="/signup" class="vault-auth-btn vault-auth-btn-gold">Join Vault</a>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
             </nav>
         </div>
+
+        <!-- Pop-down Search Overlay -->
+        <div class="search_input" id="search_input_box">
+            <div class="container">
+                <form id="searchForm" class="search-inner" action="/shopPage" method="GET">
+                    <input type="text" id="search_input" name="search" placeholder="Search Rolex, Carrera, Chronographs, Calibres..." autocomplete="off">
+                    <button type="button" class="search-close-btn" id="close_search" title="Close"><i class="ti-close"></i></button>
+                </form>
+            </div>
+        </div>
     </header>
-    <!-- End Header Area -->
-
-</body>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
-<script>
-  // Show the search bar when clicking the search icon
-  document.querySelector('.search').addEventListener('click', function() {
-    document.getElementById('search_input_box').classList.add('active');
-  });
-
-  document.getElementById('searchForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const searchQuery = document.getElementById('search_input').value;
-    const currentUrl = new URL(window.location.href);
-    const params = new URLSearchParams(currentUrl.search);
-
-    if (searchQuery) {
-      params.set('search', searchQuery);
-    } else {
-      params.delete('search');
-    }
-    
-    // Remove the active class so the search bar disappears
-    document.getElementById('search_input_box').classList.remove('active');
-
-    // Redirect to shopPage with the search query
-    if (currentUrl.pathname === '/shopPage') {
-      window.location.href = `/shopPage?${params.toString()}`;
-    } else {
-      window.location.href = `/shopPage?search=${searchQuery}`;
-    }
-  });
-
-  // Close search box and clear input when clicking the close icon
-  document.getElementById('close_search').addEventListener('click', function() {
-    document.getElementById('search_input').value = '';
-    document.getElementById('search_input_box').classList.remove('active');
-  });
-</script>
-
-</html>
+    <!-- End Floating Glass Header -->
