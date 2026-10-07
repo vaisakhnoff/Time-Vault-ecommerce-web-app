@@ -6,6 +6,47 @@ const User = require('../../models/userschema');
 const sharp =require('sharp');
 const { getRandomValues } = require('crypto');
 const Brand = require('../../models/brandSchema');
+const { cloudinary, uploadBuffer } = require('../../config/cloudinary');
+
+/**
+ * Resize an uploaded image buffer with sharp and upload it to Cloudinary.
+ * Returns the hosted secure_url that gets stored in the product document.
+ */
+const processAndUploadProductImage = async (file) => {
+    const parsed = path.parse(file.originalname || 'image');
+    let ext = (parsed.ext || '').toLowerCase();
+
+    // Normalise formats browsers don't display well to jpeg
+    let targetFormat = ext.replace('.', '');
+    if (['heic', 'heif', 'tiff', 'tif', 'bmp', 'avif', ''].includes(targetFormat)) {
+        targetFormat = 'jpeg';
+    }
+
+    let pipeline = sharp(file.buffer).resize({ width: 450, height: 440, fit: 'cover' });
+    if (targetFormat === 'jpeg' || targetFormat === 'jpg') {
+        pipeline = pipeline.jpeg({ quality: 90 });
+    } else if (targetFormat === 'webp') {
+        pipeline = pipeline.webp({ quality: 90 });
+    } else if (targetFormat === 'png') {
+        pipeline = pipeline.png();
+    }
+
+    const resizedBuffer = await pipeline.toBuffer();
+    const result = await uploadBuffer(resizedBuffer, 'time-vault/product-images');
+    return result.secure_url;
+};
+
+// Extract the Cloudinary public_id from a stored secure_url so old images can be deleted
+const getCloudinaryPublicId = (url) => {
+    if (!url || typeof url !== 'string' || !url.includes('/upload/')) return null;
+    try {
+        const afterUpload = url.split('/upload/')[1];           // v123/folder/name.jpg
+        const withoutVersion = afterUpload.replace(/^v\d+\//, ''); // folder/name.jpg
+        return withoutVersion.replace(/\.[^/.]+$/, '');          // folder/name
+    } catch (e) {
+        return null;
+    }
+};
 
 
 
@@ -86,36 +127,8 @@ const addProducts = async(req,res)=>{
         const images = [];
         if (req.files && req.files.length > 0) {
             for (let i = 0; i < req.files.length; i++) {
-                const originalImagePath = req.files[i].path;
-                const parsed = path.parse(req.files[i].filename);
-                let ext = parsed.ext.toLowerCase();
-
-                // Ensure browser-safe output format for heic, heif, tiff, bmp, etc.
-                let targetExt = ext;
-                if (['.heic', '.heif', '.tiff', '.tif', '.bmp', '.avif'].includes(ext) || !ext) {
-                    targetExt = '.jpeg';
-                }
-
-                const resizedFileName = 'resized-' + parsed.name + targetExt;
-                const resizedImagePath = path.join('public', 'uploads', 'product-images', resizedFileName);
-
-                let pipeline = sharp(originalImagePath).resize({ width: 450, height: 440, fit: 'cover' });
-                if (targetExt === '.jpeg' || targetExt === '.jpg') {
-                    pipeline = pipeline.jpeg({ quality: 90 });
-                } else if (targetExt === '.webp') {
-                    pipeline = pipeline.webp({ quality: 90 });
-                } else if (targetExt === '.png') {
-                    pipeline = pipeline.png();
-                }
-
-                await pipeline.toFile(resizedImagePath);
-
-                // Clean up original upload if distinct from resized output
-                if (fs.existsSync(originalImagePath) && originalImagePath !== resizedImagePath) {
-                    try { fs.unlinkSync(originalImagePath); } catch (e) {}
-                }
-
-                images.push(resizedFileName);
+                const imageUrl = await processAndUploadProductImage(req.files[i]);
+                images.push(imageUrl);
             }
         }
         
@@ -253,48 +266,53 @@ const editProduct = async (req, res) => {
             }
         }
 
-        let images = [...existingProduct.productImage]; // Create a copy of existing images
-        if (req.files && req.files.length > 0) {
-
-            for (const oldImage of existingProduct.productImage) {
-                const imagePath = path.join('public', 'uploads', 'product-images', oldImage);
-                if (fs.existsSync(imagePath)) {
-                    fs.unlinkSync(imagePath);
-                }
+        // Determine which existing images the user chose to keep.
+        // The edit form sends `keptImages` as a JSON array of the existing
+        // image URLs still shown (in display order). Fall back to all existing
+        // images if the field is absent (older clients / no change).
+        let keptImages;
+        if (typeof updatedData.keptImages !== 'undefined') {
+            try {
+                keptImages = JSON.parse(updatedData.keptImages);
+                if (!Array.isArray(keptImages)) keptImages = [];
+            } catch (e) {
+                keptImages = [];
             }
+        } else {
+            keptImages = [...existingProduct.productImage];
+        }
 
-            images = [];
-            for (const file of req.files) {
-                const parsed = path.parse(file.filename);
-                let ext = parsed.ext.toLowerCase();
+        // Only keep values that actually belong to this product
+        keptImages = keptImages.filter(img => existingProduct.productImage.includes(img));
 
-                let targetExt = ext;
-                if (['.heic', '.heif', '.tiff', '.tif', '.bmp', '.avif'].includes(ext) || !ext) {
-                    targetExt = '.jpeg';
-                }
-
-                const resizedFileName = 'resized-' + parsed.name + targetExt;
-                const resizedImagePath = path.join('public', 'uploads', 'product-images', resizedFileName);
-                
-                let pipeline = sharp(file.path).resize({ width: 450, height: 440, fit: 'cover' });
-                if (targetExt === '.jpeg' || targetExt === '.jpg') {
-                    pipeline = pipeline.jpeg({ quality: 90 });
-                } else if (targetExt === '.webp') {
-                    pipeline = pipeline.webp({ quality: 90 });
-                } else if (targetExt === '.png') {
-                    pipeline = pipeline.png();
-                }
-
-                await pipeline.toFile(resizedImagePath);
-
-                // Delete the original uploaded file
-                if (fs.existsSync(file.path) && file.path !== resizedImagePath) {
-                    try { fs.unlinkSync(file.path); } catch (e) {}
-                }
-                
-                images.push(resizedFileName);
+        // Delete the removed images from Cloudinary (ignore legacy local filenames)
+        const removedImages = existingProduct.productImage.filter(img => !keptImages.includes(img));
+        for (const oldImage of removedImages) {
+            const publicId = getCloudinaryPublicId(oldImage);
+            if (publicId) {
+                try { await cloudinary.uploader.destroy(publicId); } catch (e) {}
             }
         }
+
+        // Upload any newly added/cropped images and append them
+        let images = [...keptImages];
+        if (req.files && req.files.length > 0) {
+            for (const file of req.files) {
+                const imageUrl = await processAndUploadProductImage(file);
+                images.push(imageUrl);
+            }
+        }
+
+        // Enforce the 4-image maximum and require at least one image
+        images = images.slice(0, 4);
+        if (images.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'A product must have at least one image'
+            });
+        }
+        // keep updatedData clean so keptImages isn't written to the document
+        delete updatedData.keptImages;
         
         const categoryDoc = await Category.findOne({ name: updatedData.category });
         const brandDoc = await Brand.findOne({ brandName: updatedData.brand });

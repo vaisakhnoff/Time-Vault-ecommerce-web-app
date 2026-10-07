@@ -30,7 +30,7 @@ const productDetails = async(req,res)=>{
         }
 
       
-        product.productImage = product.productImage.map(img => `/uploads/product-images/${img}`);
+        // productImage now stores full Cloudinary URLs; use them as-is
 
         const relatedProducts = await Product.find({
             category: product.category._id,
@@ -41,9 +41,7 @@ const productDetails = async(req,res)=>{
         .limit(4)
         .lean();
 
-        relatedProducts.forEach(prod => {
-            prod.productImage = prod.productImage.map(img => `/uploads/product-images/${img}`);
-        });
+        // related product images are full Cloudinary URLs; no transform needed
 
      
         const userData = userId ? await user.findById(userId).lean() : null;

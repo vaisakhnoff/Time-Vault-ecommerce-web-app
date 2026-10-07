@@ -5,20 +5,14 @@ const path = require('path');
 const Address = require('../../models/addressSchema');
 const Order = require('../../models/orderSchema');
 const { log } = require('console');
+const { uploadBuffer } = require('../../config/cloudinary');
 
 function generateOTP(){
     return Math.floor(100000 + Math.random()*900000).toString();
 }
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/uploads/profile');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-    }
-});
+// Profile images are received as base64 and streamed to Cloudinary, so keep uploads in memory
+const storage = multer.memoryStorage();
 
 const upload = multer({ storage: storage });
 
@@ -242,16 +236,13 @@ const updateProfile = async (req, res) => {
         const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '');
         const imageBuffer = Buffer.from(base64Data, 'base64');
 
-       
-        const filename = `profile-${userId}-${Date.now()}.png`;
-        const filepath = path.join('public/uploads/profile', filename);
+        // Upload the cropped profile image to Cloudinary and store the hosted URL
+        const result = await uploadBuffer(imageBuffer, 'time-vault/profile', {
+            public_id: `profile-${userId}-${Date.now()}`,
+        });
 
-       
-        require('fs').writeFileSync(filepath, imageBuffer);
-
-      
         await User.findByIdAndUpdate(userId, {
-            profileImage: `/uploads/profile/${filename}` // Store the relative path
+            profileImage: result.secure_url // Store the Cloudinary URL
         });
 
         res.json({

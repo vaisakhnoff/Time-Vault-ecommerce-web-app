@@ -142,7 +142,7 @@
                         <div class="d-flex align-items-center" style="gap: 16px;">
                           <div class="product-thumb-box">
                             <% if (item.productId && item.productId.productImage && item.productId.productImage.length > 0) { %>
-                              <img src="/uploads/product-images/<%= item.productId.productImage[0] %>" alt="<%= item.productId.productName %>">
+                              <img src="<%= item.productId.productImage[0] %>" alt="<%= item.productId.productName %>">
                             <% } else { %>
                               <i class="ti-time text-muted" style="font-size: 24px;"></i>
                             <% } %>

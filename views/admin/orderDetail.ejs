@@ -103,7 +103,7 @@
             <tr>
               <td><%= item.productId.productName %></td>
               <td>
-                <img src="/uploads/product-images/<%= item.productId.productImage[0] %>"  alt="<%= item.productId.productName %>" style="width:100px; height: 130px; object-fit: cover ; padding-top: 20px;  ">
+                <img src="<%= item.productId.productImage[0] %>"  alt="<%= item.productId.productName %>" style="width:100px; height: 130px; object-fit: cover ; padding-top: 20px;  ">
               </td>
               <td>₹<%= item.price %></td>
               <td><%= item.quantity %></td>

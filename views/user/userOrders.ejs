@@ -44,7 +44,7 @@
                     <div class="d-flex align-items-center p-3" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; gap: 14px;">
                       <div style="width: 64px; height: 64px; border-radius: 8px; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;">
                         <% if (item.productId && item.productId.productImage && item.productId.productImage.length > 0) { %>
-                          <img src="/uploads/product-images/<%= item.productId.productImage[0] %>"
+                          <img src="<%= item.productId.productImage[0] %>"
                                alt="<%= item.productId.productName %>"
                                style="max-height: 54px; max-width: 54px; object-fit: contain;">
                         <% } else { %>

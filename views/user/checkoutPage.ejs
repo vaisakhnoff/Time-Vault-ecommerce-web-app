@@ -35,7 +35,7 @@
               <tr>
                 <td>
                   <% if(item.productId && item.productId.productImage && item.productId.productImage.length > 0){ %>
-                    <img src="/uploads/product-images/<%= item.productId.productImage[0] %>" alt="<%= item.productId.productName %>" style="max-width: 100px;">
+                    <img src="<%= item.productId.productImage[0] %>" alt="<%= item.productId.productName %>" style="max-width: 100px;">
                   <% } else { %>
                     <p>No Image</p>
                   <% } %>

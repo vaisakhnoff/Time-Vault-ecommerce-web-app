@@ -133,7 +133,7 @@
                                 </button>
                                 <a href="/productDetails?id=<%= item.productId._id %>">
                                     <% if (item.productId.productImage && item.productId.productImage[0]) { %>
-                                        <img src="/uploads/product-images/<%= item.productId.productImage[0] %>" 
+                                        <img src="<%= item.productId.productImage[0] %>" 
                                              alt="<%= item.productId.productName || 'Product Image' %>" />
                                     <% } else { %>
                                         <img src="/img/default-product.jpg" alt="Default Product Image" />

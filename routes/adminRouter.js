@@ -1,15 +1,8 @@
 const multer = require('multer');
 const path = require('path');
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/uploads/product-images'); 
-  },
-  filename: function (req, file, cb) {
-    const filename = Date.now() + '-' + file.originalname;
-    cb(null, filename);
-  }
-});
+// Keep uploads in memory so we can resize with sharp and stream straight to Cloudinary
+const storage = multer.memoryStorage();
 
 const uploads = multer({ storage: storage });
 

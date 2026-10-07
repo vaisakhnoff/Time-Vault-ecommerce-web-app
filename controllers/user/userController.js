@@ -24,10 +24,7 @@ const loadHomepage = async (req, res) => {
         }).populate('category').populate('brand').lean();
 
 
-        productData = productData.map(product => ({
-            ...product,
-            productImage: product.productImage.map(img => `/uploads/product-images/${img}`)
-        }));
+        // productImage now stores full Cloudinary URLs; use them directly
 
         productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         productData = productData.slice(0, 4);
@@ -103,11 +100,19 @@ function generateOTP() {
 
 async function sendverificationEmail(email, otp) {
     try {
+        if (!process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASSWORD) {
+            console.error("Email delivery is not configured. Set NODEMAILER_EMAIL and NODEMAILER_PASSWORD.");
+            return false;
+        }
+
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',
             port: 587,
             secure: false,
             requireTLS: true,
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 15000,
             auth: {
                 user: process.env.NODEMAILER_EMAIL,
                 pass: process.env.NODEMAILER_PASSWORD
@@ -281,6 +286,10 @@ const verifyOtp = async (req, res) => {
         }
 
         if (req.session.forgotOtp && otp === req.session.forgotOtp) {
+            if (!req.session.otpExpiration || Date.now() > req.session.otpExpiration) {
+                req.session.forgotOtp = null;
+                return res.status(400).json({ success: false, message: "OTP expired. Please request a new one." });
+            }
             req.session.otpVerified = true; // Mark OTP as verified for password reset
             return res.json({ success: true, redirectUrl: "/resetPassword" });
         }
@@ -298,22 +307,29 @@ const verifyOtp = async (req, res) => {
 
 const resendOtp = async (req, res) => {
     try {
-        const { email } = req.session.userData;
+        const isForgotPassword = Boolean(req.session.forgotEmail);
+        const email = isForgotPassword
+            ? req.session.forgotEmail
+            : req.session.userData?.email;
         if (!email) {
-            console.log("Email not found in session");
             return res.status(400).json({ success: false, message: "Email not found in session" });
         }
 
         const otp2 = generateOTP();
-        console.log("Resend Otp", otp2);
-        req.session.userOtp = otp2;
+        if (isForgotPassword) {
+            req.session.forgotOtp = otp2;
+            req.session.otpExpiration = Date.now() + 10 * 60 * 1000;
+        } else {
+            req.session.userOtp = otp2;
+        }
 
-        const emailSend2 = await sendverificationEmail(email, otp2); 247738
+        const emailSend2 = await sendverificationEmail(email, otp2);
         if (emailSend2) {
 
             res.status(200).json({ success: true, message: "OTP resent successfully" });
         } else {
-            console.log("Failed to resend OTP");
+            if (isForgotPassword) req.session.forgotOtp = null;
+            else req.session.userOtp = null;
             res.status(500).json({ success: false, message: "Failed to resend OTP. Please try again" });
         }
     } catch (error) {
@@ -481,10 +497,7 @@ const loadShopPage = async (req, res) => {
             .limit(limit)
             .lean();
 
-        products = products.map(product => ({
-            ...product,
-            productImage: product.productImage.map(img => `/uploads/product-images/${img}`)
-        }));
+        // productImage now stores full Cloudinary URLs; use them directly
 
         const totalProducts = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalProducts / limit);
@@ -535,17 +548,25 @@ const sendForgotOtp = async (req, res) => {
 
 
         const otp3 = generateOTP();
-        console.log(otp3);
-
         const otpExpiration = Date.now() + 10 * 60 * 1000;
 
 
+        req.session.otpVerified = false;
         req.session.forgotOtp = otp3;
         req.session.forgotEmail = email;
         req.session.otpExpiration = otpExpiration;
 
 
-        await sendverificationEmail(email, otp3);
+        const emailSent = await sendverificationEmail(email, otp3);
+        if (!emailSent) {
+            req.session.forgotOtp = null;
+            req.session.forgotEmail = null;
+            req.session.otpExpiration = null;
+            req.session.otpVerified = false;
+            return res.status(503).render("forgotPassword", {
+                message: "Unable to send the recovery code. Please check the email service configuration and try again."
+            });
+        }
 
 
         return res.render("verify-otp", {

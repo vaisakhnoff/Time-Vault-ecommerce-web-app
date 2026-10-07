@@ -9,16 +9,10 @@ const WalletTransaction = require('../../models/walletSchema');  // add this lin
 const { v4: uuidv4 } = require('uuid'); // Add this line
 const multer = require('multer');
 const path = require('path');
+const { uploadBuffer } = require('../../config/cloudinary');
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/uploads/review-images');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    }
-});
+// Review images are kept in memory and streamed to Cloudinary
+const storage = multer.memoryStorage();
 
 const upload = multer({ 
     storage: storage,
@@ -207,8 +201,14 @@ const submitReview = async (req, res) => {
         const { orderId, productId, rating, title, review } = req.body;
         const userId = req.session.user;
 
-        // Get uploaded images
-        const reviewImages = req.files ? req.files.map(file => file.filename) : [];
+        // Upload any review images to Cloudinary and collect their hosted URLs
+        let reviewImages = [];
+        if (req.files && req.files.length > 0) {
+            const uploads = await Promise.all(
+                req.files.map(file => uploadBuffer(file.buffer, 'time-vault/review-images'))
+            );
+            reviewImages = uploads.map(result => result.secure_url);
+        }
 
         // Update order item as reviewed
         await Order.updateOne(

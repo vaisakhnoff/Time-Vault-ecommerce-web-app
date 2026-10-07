@@ -1,5 +1,6 @@
 const Brand = require('../../models/brandSchema');
 const Product = require('../../models/productSchema');
+const { uploadBuffer } = require('../../config/cloudinary');
 
 
     
@@ -37,7 +38,12 @@ const getAddBrandPage = async (req, res) => {
 const addBrand = async (req, res) => {
     try {
         const { brandName } = req.body;
-        const brandImage = req.file ? req.file.filename : null;
+
+        let brandImage = null;
+        if (req.file) {
+            const result = await uploadBuffer(req.file.buffer, 'time-vault/brand-images');
+            brandImage = result.secure_url;
+        }
 
         const newBrand = new Brand({
             brandName,
@@ -72,7 +78,8 @@ const editBrand = async (req, res) => {
         const updateData = { brandName };
 
         if (req.file) {
-            updateData.brandImage = [req.file.filename];
+            const result = await uploadBuffer(req.file.buffer, 'time-vault/brand-images');
+            updateData.brandImage = [result.secure_url];
         }
 
         await Brand.findByIdAndUpdate(req.params.id, updateData);
