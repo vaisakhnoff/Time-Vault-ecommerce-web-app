@@ -43,14 +43,25 @@
   .vault-qty-stepper {
     display: inline-flex;
     align-items: center;
+    gap: 4px;
     border: 1px solid #e2e8f0;
     border-radius: 9999px;
     background: #f8fafc;
     padding: 4px;
+    position: relative;
   }
   .vault-qty-stepper button {
+    position: static;
+    float: none;
+    top: auto;
+    bottom: auto;
+    right: auto;
+    left: auto;
     width: 30px;
     height: 30px;
+    min-width: 30px;
+    padding: 0;
+    margin: 0;
     border-radius: 50%;
     border: none;
     background: #ffffff;
@@ -62,6 +73,11 @@
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
+    flex: 0 0 auto;
+  }
+  .vault-qty-stepper button::before,
+  .vault-qty-stepper button::after {
+    content: none !important;
   }
   .vault-qty-stepper button:hover {
     background: #fff7ed;
@@ -69,6 +85,9 @@
   }
   .vault-qty-stepper input {
     width: 40px;
+    min-width: 40px;
+    padding: 0;
+    margin: 0;
     text-align: center;
     border: none;
     background: transparent;
@@ -76,6 +95,8 @@
     color: #0f172a;
     font-size: 14px;
     outline: none;
+    box-shadow: none;
+    flex: 0 0 auto;
   }
   .vault-remove-pill {
     width: 36px;
@@ -161,10 +182,10 @@
                         <span style="font-weight: 600; color: #475569;">₹<%= item.price.toFixed(2) %></span>
                       </td>
                       <td data-label="Quantity">
-                        <div class="vault-qty-stepper product_count">
-                          <button class="reduced items-count" type="button"><i class="ti-minus" style="font-size: 10px;"></i></button>
-                          <input type="text" name="qty" class="input-text qty" value="<%= item.quantity %>" readonly>
-                          <button class="increase items-count" type="button"><i class="ti-plus" style="font-size: 10px;"></i></button>
+                        <div class="vault-qty-stepper">
+                          <button class="reduced" type="button" aria-label="Decrease quantity"><i class="ti-minus" style="font-size: 10px;"></i></button>
+                          <input type="text" name="qty" class="qty" value="<%= item.quantity %>" readonly>
+                          <button class="increase" type="button" aria-label="Increase quantity"><i class="ti-plus" style="font-size: 10px;"></i></button>
                         </div>
                       </td>
                       <td data-label="Total">

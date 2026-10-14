@@ -273,8 +273,24 @@ const createOnlineOrder = async (req, res) => {
     let discountedTotal = totalAmount - couponDiscount;
     if (discountedTotal < 0) discountedTotal = 0;
 
-    const amountInPaise = discountedTotal * 100;
-    
+    const amountInPaise = Math.round(discountedTotal * 100);
+
+    // Per-transaction cap for online payment, in paise. This must match the
+    // domestic transaction limit configured on your Razorpay account
+    // (Account & Settings -> Transaction Limits). Set RAZORPAY_MAX_AMOUNT_PAISE
+    // in the environment; falls back to Razorpay's ₹5,00,000 default ceiling.
+    const RAZORPAY_MAX_AMOUNT = Number(process.env.RAZORPAY_MAX_AMOUNT_PAISE) || 50000000;
+    if (amountInPaise > RAZORPAY_MAX_AMOUNT) {
+      const maxRupees = (RAZORPAY_MAX_AMOUNT / 100).toLocaleString('en-IN');
+      return res.status(400).json({
+        error: `Order total ₹${discountedTotal.toFixed(2)} exceeds the maximum allowed amount of ₹${maxRupees} for online payment. Please use a different payment method or split your order.`
+      });
+    }
+
+    if (amountInPaise <= 0) {
+      return res.status(400).json({ error: 'Order amount must be greater than zero.' });
+    }
+
     const options = {
       amount: amountInPaise,
       currency: 'INR',

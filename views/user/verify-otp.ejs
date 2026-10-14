@@ -10,7 +10,13 @@
 
     <div class="vault-card" style="max-width: 440px; margin: 0 auto; text-align: center;">
       <h4 style="font-weight: 800; color: #0f172a; margin-bottom: 8px;">Verify Your Account</h4>
-      <p style="color: #64748b; font-size: 14px; margin-bottom: 24px;">Enter the verification code sent to your email to complete registration.</p>
+      <p style="color: #64748b; font-size: 14px; margin-bottom: 24px;">
+        <% if (typeof type !== 'undefined' && type === 'forgot') { %>
+          Enter the recovery code sent to your email to reset your password.
+        <% } else { %>
+          Enter the verification code sent to your email to complete registration.
+        <% } %>
+      </p>
 
       <form action="/verify-otp" method="POST" id="otpForm" novalidate="novalidate" onsubmit="return verifyOtp()">
         <div class="form-group mb-3">
