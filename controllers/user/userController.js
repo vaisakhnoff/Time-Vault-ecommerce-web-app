@@ -16,22 +16,25 @@ const user = require('../../models/userschema');
 const loadHomepage = async (req, res) => {
     try {
         const userId = req.session.user;
-        const categories = await Category.find({ isListed: true });
-        let productData = await Product.find({
+        // Run the independent lookups in parallel
+        const [categoryIds, userData] = await Promise.all([
+            Category.find({ isListed: true }).distinct('_id'),
+            userId ? User.findById(userId).lean() : null
+        ]);
+
+        // productImage stores full Cloudinary URLs; use them directly
+        const productData = await Product.find({
             isBlocked: false,
-            category: { $in: categories.map(category => category._id) },
+            category: { $in: categoryIds },
             quantity: { $gt: 0 }
-        }).populate('category').populate('brand').lean();
+        })
+            .sort({ createdAt: -1 })
+            .limit(4)
+            .populate('category')
+            .populate('brand')
+            .lean();
 
-
-        // productImage now stores full Cloudinary URLs; use them directly
-
-        productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
-        productData = productData.slice(0, 4);
-
-        if (userId) {
-            const userData = await User.findOne({ _id: userId });
-
+        if (userData) {
             res.render('home', { user: userData, products: productData });
         } else {
             res.render('home', { products: productData });

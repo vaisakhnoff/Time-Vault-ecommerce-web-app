@@ -82,4 +82,6 @@ const productSchema = new Schema({
 }, 
 { timestamps: true });
 
+productSchema.index({ isBlocked: 1, category: 1, quantity: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Product', productSchema);
