@@ -69,6 +69,8 @@ router.post('/updateAddress', auth.checkSession, profileController.updateAddress
 router.post('/deleteAddress', auth.checkSession, profileController.deleteAddress);
 
 router.get('/orders', auth.checkSession, profileController.userOrders);
+// Backwards-compatible redirect for the old /userOrders URL
+router.get('/userOrders', (req, res) => res.redirect('/orders'));
 router.get('/order/:id', auth.checkSession, orderController.viewOrderDetails);
 router.post('/cancelOrder', auth.checkSession, orderController.cancelOrder);
 router.post(
